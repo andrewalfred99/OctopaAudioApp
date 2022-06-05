@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Assets Type</title>
+    <script>
+const { url } = require("node:inspector");
+
+        function SaveNewType() {
+            var TypeName = document.getElementById("txtBName").value;
+            var Type = $("#txtBName").val();
+            if (TypeName == "") {
+                alert("sorry, you missed to enter Type name");
+                return;
+            }
+            else {
+                //alert("Data Saved DOne")
+                $.ajax({
+                    type: "POST",
+                    url: "/SetupAssetd/SaveNewType?TypeName=" + TypeName,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function myfunction(andrew) {
+                        alert(andrew);
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-4 col-sm-2">
+            <input class="form-control" id="txtBName" />
+        </div>
+        <div class="col-md-4 col-sm-2">
+            <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewType()" />
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover" style="text-align:center">
+        <thead class="bg-dark">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetType>)ViewData["TypeListData"])
+            {
+                <tr>
+                    <td>@item.Code</td>
+                    <td>@item.TypeName</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</body>
+</html>

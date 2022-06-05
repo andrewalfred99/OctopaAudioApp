@@ -15,6 +15,8 @@ namespace OctopaAudioApp.Models.AudioDataContext
             //this.Database.SetCommandTimeout(180);
         }
         public virtual DbSet<AssetBrand> AssetBrands { get; set; }
+
+        public virtual DbSet<AssetType> AssetTypes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<ass>
