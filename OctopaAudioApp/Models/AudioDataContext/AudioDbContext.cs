@@ -17,6 +17,8 @@ namespace OctopaAudioApp.Models.AudioDataContext
         public virtual DbSet<AssetBrand> AssetBrands { get; set; }
 
         public virtual DbSet<AssetType> AssetTypes { get; set; }
+
+        public virtual DbSet<AssetStatus> AssetStatuses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<ass>

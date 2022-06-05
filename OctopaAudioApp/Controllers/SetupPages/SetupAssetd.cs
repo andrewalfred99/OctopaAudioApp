@@ -63,5 +63,30 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 throw;
             }
         }
+        public IActionResult CreateNewStatus()
+        {
+            var StatusList = _Context.AssetStatuses.ToList();
+            ViewData["StatusListData"] = StatusList;
+            return View();
+        }
+
+        public JsonResult SaveNewStatus(string StatusName)
+        {
+            try
+            {
+                AssetStatus NewS = new AssetStatus();
+                NewS.StatusName = StatusName;
+                NewS.DateUpdate = DateTime.Now;
+                NewS.AddedUser = User.Identity.Name;
+                _Context.AssetStatuses.Add(NewS);
+                _Context.SaveChanges();
+                return Json("Status Created Done");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
     }
 }
