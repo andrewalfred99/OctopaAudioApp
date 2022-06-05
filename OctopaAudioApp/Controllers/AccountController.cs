@@ -44,6 +44,8 @@ namespace OctopaAudioApp.Controllers
                     UserName = model.UserName,
 
                     Email = model.Email,
+                    
+                   
 
                     //NormalizedUserName = model.UserName, 
 

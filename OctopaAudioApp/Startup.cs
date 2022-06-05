@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OctopaAudioApp.Models;
+using OctopaAudioApp.Models.AudioDataContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace OctopaAudioApp
                 Option.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";
 
             });
-
+            services.AddDbContext<AudioDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("AudioConn")));
             services.AddControllersWithViews();
 
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AudioIdentity>();

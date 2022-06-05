@@ -48,6 +48,6 @@ namespace OctopaAudioApp.Models
 
         public string ConfirmPassword { get; set; }
 
-        
+        public DateTime PasswordCreationStamp { get; set; }
     }
 }
