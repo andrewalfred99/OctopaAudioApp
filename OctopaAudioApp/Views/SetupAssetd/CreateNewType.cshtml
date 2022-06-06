@@ -3,13 +3,13 @@
 <head>
     <title>Assets Type</title>
     <script>
-const { url } = require("node:inspector");
+        const { url } = require("node:inspector");
 
         function SaveNewType() {
             var TypeName = document.getElementById("txtBName").value;
             var Type = $("#txtBName").val();
             if (TypeName == "") {
-                alert("sorry, you missed to enter Type name");
+                alert("sorry, you missed to enter Type's name");
                 return;
             }
             else {
@@ -26,14 +26,87 @@ const { url } = require("node:inspector");
             }
         }
     </script>
+
+    <script>
+        function EditType() {
+            var Code = document.getElementById("txtCode").value;
+            var NewType = document.getElementById("EditBName").value;
+
+            $.ajax({
+                type: "POST",
+                url: "/SetupAssetd/EditTypeByCode?Code=" + Code + "&NewType=" + NewType,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function myfunction(andrew) {
+                    alert(andrew);
+                }
+            })
+        }
+        function Openedit(Code) {
+            console.log(Code);
+            $.ajax({
+                type: "POST",
+                url: "/SetupAssetd/OpenPopupType?Code=" + Code,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (json) {
+                    document.getElementById("txtCode").value = Code;
+                    document.getElementById("txtName").value = json;
+                    $("#TypeNameEditModalCenter").modal('show');
+
+                }
+            });
+
+        }
+    </script>
 </head>
 <body>
     <div class="row">
         <div class="col-md-4 col-sm-2">
-            <input class="form-control" id="txtBName" />
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#TypeNameCreateModalCenter">Create a new</button>
         </div>
-        <div class="col-md-4 col-sm-2">
-            <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewType()" />
+    </div>
+
+    <div class="modal fade" id="TypeNameCreateModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create A New Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control" id="txtBName" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewType()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="TypeNameEditModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit a Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="txtName" disabled="disabled" />
+                    <input type="text" id="txtCode" disabled="disabled" />
+
+                    <input class="form-control" id="EditBName" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnEdit" value="Edit" class="btn btn-success" onclick="EditType()" />
+                </div>
+            </div>
         </div>
     </div>
 
@@ -49,9 +122,9 @@ const { url } = require("node:inspector");
             @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetType>)ViewData["TypeListData"])
             {
                 <tr>
-                    <td>@item.Code</td>
-                    <td>@item.TypeName</td>
-                    <td></td>
+                    <td id="lblCode">@item.Code</td>
+                    <td id="lblName">@item.TypeName</td>
+                    <td><button type="button" class="btn btn-primary" onclick="Openedit(@item.Code)">Edit</button></td>
                 </tr>
             }
         </tbody>

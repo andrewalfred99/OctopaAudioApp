@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OctopaAudioApp.Models.Assigning;
 using OctopaAudioApp.Models.SetupModels;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace OctopaAudioApp.Models.AudioDataContext
         public virtual DbSet<AssetType> AssetTypes { get; set; }
 
         public virtual DbSet<AssetStatus> AssetStatuses { get; set; }
+
+        public virtual DbSet<Assign> Assigns { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<ass>
