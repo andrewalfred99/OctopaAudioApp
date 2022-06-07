@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using OctopaAudioApp.Models.Assigning;
 using OctopaAudioApp.Models.AudioDataContext;
 using OctopaAudioApp.Models.SetupModels;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -102,6 +106,42 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
                 throw;
             }
+        }
+        public JsonResult UploadPhoneSheet(IFormFile file)
+        {
+            try
+            {
+                var All = new List<AssignModel>();
+                var stream = file.OpenReadStream();
+                using (var package = new ExcelPackage(stream))
+                {
+                        ExcelWorkbook excelworbook = package.Workbook;
+                        var work = package.Workbook.Worksheets.ToList();
+                        foreach (var worksheet in excelworbook.Worksheets)
+                        {
+                            var end = worksheet.Dimension.Rows;
+                            for (int row = 2; row <= end; row++)
+                            {
+                                All.Add(new AssignModel
+                                {
+                                    SerialNo = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                    Quantity = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
+                                    AssingedUser = worksheet.Cells[row, 3].Value.ToString().Trim(),
+                                }); ;
+                            }
+
+                        }
+                   
+                }
+                var Dataobject =new  { All };
+                return Json(Dataobject);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+          
         }
 
         public JsonResult EditStatusByCode(int Code,string NewStatus)

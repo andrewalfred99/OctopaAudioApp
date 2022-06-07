@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+
+</head>
+<body>
+    <input id="txtFile" type="file" name="file" />
+    <input type="button" value="Import" class="btn btn-sm btn-danger" onclick="ImportSheetExcel()" />
+    <table class="table table-bordered table-hover" style="text-align:center">
+        <thead class="bg-dark">
+            <tr>
+                <th>Serial No</th>
+                <th>Quantity</th>
+                <th>AssingedUser</th>
+            </tr>
+        </thead>
+        <tbody id="bodydetails">
+        </tbody>
+    </table>
+</body>
+</html>
+<script>
+
+    function ImportSheetExcel() {
+        var formData = new FormData();
+        formData.append('file', $('#txtFile')[0].files[0]);
+        $.ajax({
+            type: "POST",
+            url: "/SetupAssetd/UploadPhoneSheet",
+            data: formData,
+            processData: false,  // tell jQuery not to process the data
+            contentType: false,  // tell jQuery not to set contentType
+            success: function (Dataobject) {
+                console.log(Dataobject);
+                Sheet = Dataobject.all
+                Draw();
+
+            }
+        });
+    }
+    
+    function Draw() {
+        var html = ''
+        for (var i = 0; i < Sheet.length; i++) {
+            console.log(Sheet);
+            html += '<tr>'
+            html += '<td>' + Sheet[i].serialNo + '</td>'
+            html += '<td>' + Sheet[i].quantity + '</td>'
+            html += '<td>' + Sheet[i].assingedUser + '</td>'
+            html += '</tr>'
+
+        }
+        $('#bodydetails').html(html);
+    }
+</script>
