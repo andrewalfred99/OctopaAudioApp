@@ -17,5 +17,9 @@ namespace OctopaAudioApp.Models.Assigning
         public int Quantity { get; set; }
 
         public string AssingedUser { get; set; }
+
+        public string AddedUser { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime DateUpdate { get; set; }
     }
 }

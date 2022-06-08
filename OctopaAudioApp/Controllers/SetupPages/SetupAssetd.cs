@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OctopaAudioApp.Models;
 using OctopaAudioApp.Models.Assigning;
 using OctopaAudioApp.Models.AudioDataContext;
 using OctopaAudioApp.Models.SetupModels;
@@ -7,6 +8,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -100,6 +102,81 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 _Context.AssetStatuses.Add(NewS);
                 _Context.SaveChanges();
                 return Json("Status Created Done");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        public JsonResult SaveExcelSheet([FromBody]  ALLDataView NewAssign)
+        {
+            try
+            {
+
+            
+            foreach (var item in NewAssign.ExcelList)
+            {
+                AssignModel NewA = new AssignModel();
+                    NewA.SerialNo = item.SerialNo;
+                    NewA.AssingedUser = item.AssingedUser;
+                    NewA.Quantity = item.Quantity;
+                    NewA.AddedUser = User.Identity.Name;
+                    NewA.DateUpdate = DateTime.Now;
+                    _Context.Assigns.Add(NewA);
+                    _Context.SaveChanges();
+            }
+
+            return Json("Accepted");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        public JsonResult ImportSheetExcel(IFormFile file, String GName)
+        {
+            List<string> NoteExisting = new List<string>();
+            var All = new List<AssignModel>();
+            
+
+            string Message = "";
+            try
+            {
+                if (file == null)
+                {
+                    Message = "You Forgot To select a file ";
+                }
+
+
+                else
+
+                {
+
+                    List<AssignModel> FillList = new List<AssignModel>();
+                    var stream = file.OpenReadStream();
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        ExcelWorkbook excelWorkbook = package.Workbook;
+                        var work = package.Workbook.Worksheets.ToList();
+                        foreach( var worksheet in excelWorkbook.Worksheets)
+                        {
+                            var end = worksheet.Dimension.Rows;
+                            for(int row = 2; row <= end; row++)
+                            {
+                                All.Add(new AssignModel
+                                {
+                                    SerialNo = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                    Quantity = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
+                                    AssingedUser = worksheet.Cells[row, 3].Value.ToString().Trim(),
+                                });
+                            }
+                        }
+                    }
+                }
+                var Dataobject = new { All };
+                return Json(Dataobject);
             }
             catch (Exception ex)
             {

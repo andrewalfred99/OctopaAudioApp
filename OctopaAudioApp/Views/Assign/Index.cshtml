@@ -7,7 +7,7 @@
 <body>
     <input id="txtFile" type="file" name="file" />
     <input type="button" value="Import" class="btn btn-sm btn-danger" onclick="ImportSheetExcel()" />
-    <table class="table table-bordered table-hover" style="text-align:center">
+    <table class="table table-bordered table-hover" style="text-align:center" id="tblserialesdetailes">
         <thead class="bg-dark">
             <tr>
                 <th>Serial No</th>
@@ -18,10 +18,42 @@
         <tbody id="bodydetails">
         </tbody>
     </table>
+    <input type="button" class ="btn btn-sm btn-danger" onclick="convertToArrayTwo()" value="Convert TO Array" />
+
 </body>
 </html>
 <script>
+    function convertToArrayTwo() {
+        var ExcelList = new Array();
+        $('#tblserialesdetailes tbody Tr').each(function () {
+            var row = $(this);
+            var Data = {};
+            Data.SerialNo = row.find("TD").eq(0).html();
+            Data.Quantity = parseInt(row.find("TD").eq(1).html());
+            Data.AssingedUser = row.find("TD").eq(2).html();
+            ExcelList.push(Data);
+        });
+        console.log(ExcelList);
+        var Data = { ExcelList}
+        $.ajax({
+            type: 'POST',
+            url: '/SetupAssetd/SaveExcelSheet',
+            data: JSON.stringify(Data),
+            contentType: 'application/json; charset=utf-8',
+            datatype: 'json',
+            success: function (result) {
+                alert('Success ');
+            },
+            error: function (result) {
+                alert('Fail ');
+            }
+        });
+    }
 
+    function SendToController(docsArray) {
+       
+    }
+    
     function ImportSheetExcel() {
         var formData = new FormData();
         formData.append('file', $('#txtFile')[0].files[0]);
@@ -35,6 +67,7 @@
                 console.log(Dataobject);
                 Sheet = Dataobject.all
                 Draw();
+                
 
             }
         });
