@@ -21,7 +21,9 @@ namespace OctopaAudioApp.Controllers.Assigning
         public IActionResult Index()
         {
             var ImportList = _Context.Assigns.ToList();
+            var StatusList = _Context.AssetStatuses.ToList();
             ViewData["ImportListData"] = ImportList;
+            ViewData["StatusListData"] = StatusList;
             return View();
         }
         public JsonResult UploadPhoneSheet(IFormFile file)

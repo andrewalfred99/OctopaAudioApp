@@ -6,20 +6,49 @@
 </head>
 <body>
     <input id="txtFile" type="file" name="file" />
-    <input type="button" value="Import" class="btn btn-sm btn-danger" onclick="ImportSheetExcel()" />
-    <table class="table table-bordered table-hover" style="text-align:center" id="tblserialesdetailes">
+    <input type="button" value="Import" class="btn btn-sm btn-primary" onclick="ImportSheetExcel()" />
+    <table class="table" style="text-align:center" id="tblserialesdetailes">
         <thead class="bg-dark">
             <tr>
-                <th>Serial No</th>
-                <th>Quantity</th>
-                <th>AssingedUser</th>
+                <th class="center">Serial No</th>
+                <th class="center">Quantity</th>
+                <th class="center">Assinged User</th>
             </tr>
         </thead>
         <tbody id="bodydetails">
         </tbody>
     </table>
-    <input type="button" class ="btn btn-sm btn-danger" onclick="convertToArrayTwo()" value="Convert TO Array" />
+    <input type="button" class ="btn btn-sm btn-secondary" onclick="convertToArrayTwo()" value="Convert TO Array" />
+    @*<select>
+        @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetStatus>)ViewData["StatusListData"])
+        {
+            <option value="@item.Code">@item.StatusName</option>
+        }
+    </select>*@
+    <footer>
+        <table class="table table-bordered table-hover" style="text-align:center" id="AddingNewRow">
+            <thead class="bg-dark">
+                <tr>
+                    <th class="center">Serial No</th>
+                    <th class="center">Quantity</th>
+                    <th class="center">Assinged User</th>
+                    <th class="center">Options</th>
+                </tr>
+            <tbody id="AddingRow">
+                <tr>
 
+                    <td><input type="text" id="form11" class="form-control" /></td>
+
+                    <td><input type="number" id="form12" class="form-control" /></td>
+
+                    <td><input type="text" id="form13" class="form-control" /></td>
+                   
+                    <td><input type="button" id="AddButtonToRow" class="btn btn-sm btn-success" onclick="AddNewRowTwo()" value="SAVE" /></td>
+                </tr>
+            </tbody>
+        </table>
+        @*<input type="button" class="btn btn-sm btn-success" onclick="myFunction()" value="Save a New Row" />*@
+    </footer>
 </body>
 </html>
 <script>
@@ -86,4 +115,130 @@
         }
         $('#bodydetails').html(html);
     }
+    function SaveNewRow() {
+        var SerialNo = document.getElementById("form11").nodeValue();
+        var Quantity = document.getElementById("form12").Value();
+        var AssingedUser = document.getElementById("form13").Value();
+        if (SerialNo == "" || Quantity == "" || AssingedUser == "") {
+            alert("sorry one of the columns is Empty, please fill all Columns")
+            return;
+        }
+        else
+        {
+            $.ajax({
+                type: "POST",
+                url: "/SetupAssetd/SaveNewRow?"
+            })
+        }
+        
+    }
+    function AddNewRowTwo() {
+        var SerialNo = $("#form11");
+        var Quantity = $("#form12");
+        var AssingedUser = $("#form13");
+        if (SerialNo == "" || Quantity == "" || AssingedUser == "") {
+            alert("sorry Some of the columns is Empty, please fill all Columns")
+            return;
+        }
+        else {
+            var tBody = $("#AddingNewRow > TBODY")[0];
+            var row = tBody.insertRow(0);
+
+            var cell = $(row.insertCell(-1));
+            cell.html(SerialNo.val());
+
+            var cell = $(row.insertCell(-1));
+            cell.html(Quantity.val());
+
+            var cell = $(row.insertCell(-1));
+            cell.html(AssingedUser.val());
+
+            cell = $(row.insertCell(-1));
+
+            var btnRemove = $("<input />");
+            btnRemove.attr("type", "button");
+            btnRemove.attr("onclick", "Remove(this);");
+            btnRemove.val("Remove");
+            btnRemove.addClass("btn btn-danger btn-sm");
+            cell.append(btnRemove);
+
+            document.getElementById("form11").value = ""
+            document.getElementById("form12").value = ""
+            document.getElementById("form13").value = ""
+
+        }
+    }
+    //function AddNewRow() {
+    //    var SerialNo = $("#form11").val();
+    //    var Quantity = $("#form12").val();
+    //    var AssingedUser = $("#form13").val();
+    //    var DeleteButton = $("#form14").val();
+    //    var table = document.getElementById("AddingRow");
+        
+    //    if (SerialNo == "" || Quantity == "" || AssingedUser == "") {
+    //        alert("sorry Some of the columns is Empty, please fill all Columns")
+    //        return;
+    //    }
+    //    else {
+    //        var row = table.insertRow(-1);
+    //        var cell1 = row.insertCell(0);
+    //        var cell2 = row.insertCell(1);
+    //        var cell3 = row.insertCell(2);
+    //        var cell4 = row.insertCell(3);
+    //        cell1.innerHTML = SerialNo;
+    //        cell2.innerHTML = Quantity;
+    //        cell3.innerHTML = AssingedUser;
+
+
+    //        var btnRemove = $("<input />");
+    //        btnRemove.attr("type", "button");
+    //        btnRemove.attr("onclick", "Remove(this);");
+    //        btnRemove.val("Remove");
+    //        btnRemove.addClass("btn btn-danger btn-sm");
+    //        cell.append(btnRemove);
+
+    //        document.getElementById("form11").value = ""
+    //        document.getElementById("form12").value = ""
+    //        document.getElementById("form13").value = ""
+
+            
+    //    }
+
+    //}
+
+    function Remove(button) {
+        //Determine the reference of the Row using the Button.
+        var row = $(button).closest("TR");
+        var name = $("TD", row).eq(0).html();
+        if (confirm("Do you want to Delete This Row: " + name)) {
+            //Get the reference of the Table.
+            var table = $("#AddingNewRow")[0];
+            //Delete the Table row using it's Index.
+            table.deleteRow(row[0].rowIndex);
+        }
+    };
+
+            //function onClickDelete(event) {
+            //    var row = $(event).closest("TR");
+            //    var name = $("TD", row).eq(0).html();
+            //    if (confirm("Do you want to Delete This Row: " + name)) {
+            //        //Get the reference of the Table.
+            //        var table = $("#AddingRow")[0];
+            //        //Delete the Table row using it's Index.
+            //        table.deleteRow(row[0].rowIndex);
+            //    }
+            //}
+
+    //function myFunction() {
+    //    var table = document.getElementById("LOL");
+    //    var row = table.insertRow(0);
+    //    var cell1 = row.insertCell(0);
+    //    var cell2 = row.insertCell(1);
+    //    var cell3 = row.insertCell(2);
+    //    cell1.innerHTML = $("#form11").val();
+    //    cell2.innerHTML = "NEW CELL2";
+    //    cell3.innerHTML = "NEW CELL3";
+
+
+    //}
 </script>
