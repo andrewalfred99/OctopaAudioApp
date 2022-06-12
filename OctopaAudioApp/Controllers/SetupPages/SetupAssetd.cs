@@ -21,6 +21,16 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             _Context = context;
         }
+        public IActionResult Adding()
+        {
+            var BrandList = _Context.AssetBrands.ToList();
+            var TypeList = _Context.AssetTypes.ToList();
+            var StatusList = _Context.AssetStatuses.ToList();
+            ViewData["TypeListData"] = TypeList;
+            ViewData["StatusListData"] = StatusList;
+            ViewData["BrandListData"] = BrandList;
+            return View();
+        }
         public IActionResult CreateNewBrand()
         {
             var BrandList = _Context.AssetBrands.ToList();
