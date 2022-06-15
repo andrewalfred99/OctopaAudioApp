@@ -23,12 +23,14 @@ namespace OctopaAudioApp.Controllers.SetupPages
         }
         public IActionResult Adding()
         {
+            var ItemList = _Context.Inputs.ToList();
             var BrandList = _Context.AssetBrands.ToList();
             var TypeList = _Context.AssetTypes.ToList();
             var StatusList = _Context.AssetStatuses.ToList();
             ViewData["TypeListData"] = TypeList;
             ViewData["StatusListData"] = StatusList;
             ViewData["BrandListData"] = BrandList;
+            ViewData["ItemListData"] = ItemList;
             return View();
         }
         public IActionResult CreateNewBrand()
@@ -118,6 +120,34 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
                 throw;
             }
+        }
+        public JsonResult SaveInputData([FromBody] ALLDataView NewItem)
+        {
+            try
+            {
+                //var item = NewItem.Data;
+                Inputs NewI = new Inputs();
+                NewI.SerialNUmber = NewItem.Data.SerialNUmber;
+                NewI.Brands = NewItem.Data.Brands;
+                NewI.Types = NewItem.Data.Types;
+                NewI.Status = NewItem.Data.Status;
+                NewI.Notes = NewItem.Data.Notes;
+                NewI.Description = NewItem.Data.Description;
+                NewI.Cpu = NewItem.Data.Cpu;
+                NewI.GPU = NewItem.Data.GPU;
+                NewI.Ram = NewItem.Data.Ram;
+                NewI.Storage = NewItem.Data.Storage;
+                NewI.AddedUser = User.Identity.Name;
+                NewI.DateUpdate = DateTime.Now;
+                _Context.Inputs.Add(NewI);
+                _Context.SaveChanges();
+                return Json("Accepted");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
         }
         public JsonResult SaveExcelSheet([FromBody]  ALLDataView NewAssign)
         {
@@ -230,7 +260,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
             }
           
         }
-
+       
         public JsonResult EditStatusByCode(int Code,string NewStatus)
         {
             try
