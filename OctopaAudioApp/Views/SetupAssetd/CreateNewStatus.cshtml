@@ -45,7 +45,7 @@
             console.log(Code);
             $.ajax({
                 type: "POST",
-                url: "/SetupAssetd/OpenPopup?Code=" + Code,
+                url: "/SetupAssetd/OpenPopupStatus?Code=" + Code,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (json) {

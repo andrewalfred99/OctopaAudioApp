@@ -21,16 +21,36 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             _Context = context;
         }
+
+        public JsonResult GetAllDataitem()
+        {
+            var Data = _Context.Inputs.Join(_Context.AssetBrands, a => a.Brands, b => b.Code, (a, b) => new { a, b })
+            .Join(_Context.AssetTypes, c => c.a.Types, d => d.Code, (c, d) => new { c, d }).Join(_Context.AssetStatuses, e => e.c.a.Status, f => f.Code, (e, f) => new { e, f })
+            .Select(A => new { A.e.c.a.SerialNUmber, A.e.c.b.BrandName, A.e.d.TypeName, A.f.StatusName, A.e.c.a.Notes, A.e.c.a.Description, A.e.c.a.Cpu, A.e.c.a.GPU, A.e.c.a.Ram, A.e.c.a.Storage }).ToList();
+            return Json(Data);
+        }
         public IActionResult Adding()
         {
-            var ItemList = _Context.Inputs.ToList();
+           
+            //var Switch = _Context.AssetBrands
+            //    .Join(
+            //    _Context.Inputs,
+            //   BrandSetup => AssetBrand,
+            //   BrandsItems => Inputs,
+            //   (BrandSetup, BrandsItems) => new
+            //   {
+            //       BrandID = BrandsItems.Brands,
+            //       BrandName = BrandSetup.BrandName,
+            //   }
+            //    ).Tolist();
+          
             var BrandList = _Context.AssetBrands.ToList();
             var TypeList = _Context.AssetTypes.ToList();
             var StatusList = _Context.AssetStatuses.ToList();
+
             ViewData["TypeListData"] = TypeList;
             ViewData["StatusListData"] = StatusList;
             ViewData["BrandListData"] = BrandList;
-            ViewData["ItemListData"] = ItemList;
             return View();
         }
         public IActionResult CreateNewBrand()

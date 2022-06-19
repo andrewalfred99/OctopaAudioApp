@@ -21,6 +21,9 @@
                     dataType: "json",
                     success: function myfunction(andrew) {
                         alert(andrew);
+                        document.getElementById("txtBName").value = ""
+                        $("#BrandNameCreateModalCenter").modal('hide');
+
                     }
                 });
             }
@@ -53,6 +56,7 @@
                     document.getElementById("txtCode").innerHTML = Code;
                     document.getElementById("txtName").value = json;
                     $("#BrandNameEditModalCenter").modal('show');
+                    $("#TABLE").ajax.reload;
 
                 }
             });
@@ -125,7 +129,7 @@
     </div>
     </div>
 
-    <table class="table table-bordered table-hover" style="text-align:center">
+    <table class="table table-bordered table-hover" id="TABLE" style="text-align:center">
         <thead class="bg-dark">
             <tr>
                 <th>Code</th>

@@ -2,41 +2,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Adding An Item</title>
-
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
 </head>
+
 <body>
     <form>
-        <table class="table table-bordered table-hover" style="text-align:center">
+        <input type="text" id="myInput" onkeyup="Search()" placeholder="Search">
+        <table class="table table-bordered table-hover dt-responsive nowrap" id="Table1111" style="text-align:center">
             <thead class="bg-dark">
                 <tr>
                     <th>Serial Number</th>
-                    <th>Brand</th>
                     <th>Type</th>
+                    <th>Brand</th>
                     <th>Status</th>
-                    <th>Notes</th>
                     <th>Description</th>
+                    <th>Notes</th>
                     <th>CPU</th>
                     <th>GPU</th>
                     <th>RAM</th>
                     <th>Storage</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.Inputs>)ViewData["ItemListData"])
-                {
+            <tbody id="ALlItem">
+                @*@foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.ItemView>)ViewData["ItemListData"])
+                    {
                     <tr>
                         <td id="lblSN">@item.SerialNUmber</td>
-                        <td id="lblBrand">@item.Brands</td>
-                        <td id="lblType">@item.Types</td>
-                        <td id="lblStatus">@item.Status</td>
-                        <td id="lblNotes">@item.Notes</td>
+                        <td id="lblBrand">@item.BrandName</td>
+                        <td id="lblType">@item.TypeName</td>
+                        <td id="lblStatus">@item.StatusName</td>
                         <td id="lblDescription">@item.Description</td>
+                        <td id="lblNotes">@item.Notes</td>
                         <td id="lblCpu">@item.Cpu</td>
                         <td id="lblGpu">@item.GPU</td>
                         <td id="lblRam">@item.Ram</td>
                         <td id="lblStorage">@item.Storage</td>
                     </tr>
-                }
+                    }*@
             </tbody>
         </table>
         <input type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#CreateNewItem" id="COnvertToArray" value="Create New Item" />
@@ -56,7 +58,7 @@
                             <label for="SerialNumber">Serial Number:</label>
                             <input type="text" class="form-control" id="SerialNumberInput" />
                         </div>
-                        <div class="form-group col-sm-4" >
+                        <div class="form-group col-sm-4">
                             <label for="Brands">Brands:</label>
                             <select id="Brands">
                                 <option value="-1">--Select Brand--</option>
@@ -160,12 +162,25 @@
                         datatype: 'json',
                         success: function (result) {
                             alert('Success ');
+                            $("#CreateNewItem").modal('hide');
+                            GetData();
+                            
+
                         },
                         error: function (result) {
                             alert('Fail ');
                         }
                     });
-
+                    document.getElementById("SerialNumberInput").value = ""
+                    document.getElementById("Brands").value = "-1"
+                    document.getElementById("Types").value = "-1"
+                    document.getElementById("Status").value = "-1"
+                    document.getElementById("Description").value = ""
+                    document.getElementById("Notes").value = ""
+                    document.getElementById("CPU").value = ""
+                    document.getElementById("GPU").value = ""
+                    document.getElementById("Ram").value = ""
+                    document.getElementById("Storage").value = ""
                 }
             }
             else
@@ -180,15 +195,28 @@
                     datatype: 'json',
                     success: function (result) {
                         alert('Success ');
+                        $("#CreateNewItem").modal('hide');
+                        GetData();
                     },
                     error: function (result) {
                         alert('Fail ');
                     }
                 });
+                document.getElementById("SerialNumberInput").value = ""
+                document.getElementById("Brands").value = "-1"
+                document.getElementById("Types").value = "-1"
+                document.getElementById("Status").value = "-1"
+                document.getElementById("Description").value = ""
+                document.getElementById("Notes").value = ""
+                document.getElementById("CPU").value = ""
+                document.getElementById("GPU").value = ""
+                document.getElementById("Ram").value = ""
+                document.getElementById("Storage").value = ""
             }
 
         }
     $(document).ready(function () {
+        GetData();
         $("#Types").change(function () {
             var type = $('#Types :selected').text();
             console.log(type);
@@ -203,6 +231,66 @@
             }
         });
     });
+    function GetData() {
+        $.ajax({
+            type: "GET",
+            url: "/SetupAssetd/GetAllDataitem",
+            contentType: "application/json;charset=utf-8",
+            data: "{}",
+            dataType:"json",
+            success: function (json) {
+                Data = json;
+                Draw();;
+
+
+            }
+        });
+    }
+    function Draw() {
+        var html = ''
+        for (var i = 0; i < Data.length; i++) {
+            html += '<tr>'
+            html += '<td>' + Data[i].serialNUmber + '</td>'
+            html += '<td>' + Data[i].typeName + '</td>'
+            html += '<td>' + Data[i].brandName + '</td>'
+            html += '<td>' + Data[i].statusName + '</td>'
+            html += '<td>' + Data[i].description + '</td>'
+            html += '<td>' + Data[i].notes + '</td>'
+            html += '<td>' + Data[i].cpu + '</td>'
+            html += '<td>' + Data[i].gpu + '</td>'
+            html += '<td>' + Data[i].ram + '</td>'
+            html += '<td>' + Data[i].storage + '</td>'
+
+            html += '</tr>'
+
+        }
+        $('#ALlItem').html(html);
+    }
+    $("#myInput").on("keyup", function () {
+
+        var value = $(this).val().toLowerCase();
+
+        $("#Table1111 tr").filter(function () {
+
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+
+        });
+
+    });
+    //function Search() {
+    //    var input = document.getElementById("myInput");
+    //    var filter = input.value.toUpperCase();
+    //    var table = document.getElementById("Table1111");
+    //    var tr = table.getElementsByTagName("tr");
+    //    for (i = 0; i < tr.length; i++) {
+    //            txtValue = tr.textContent || tr.innerText;
+    //            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    //                tr[i].style.display = "";
+    //            } else {
+    //                tr[i].style.display = "none";
+    //            }
+    //    }
+    //}
     //function ShowMoreOptions() {
     //    var Select = document.getElementById("Types");
     //    var ShowToLaptop = document.getElementById("ShowToLaptop");
