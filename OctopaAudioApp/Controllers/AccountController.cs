@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols;
 using OctopaAudioApp.Models;
+using OctopaAudioApp.Models.SetupModels;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,11 +14,12 @@ namespace OctopaAudioApp.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
-       
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        
 
-        public AccountController(UserManager<IdentityUser> userManager , SignInManager<IdentityUser> signInManager)
+
+        public AccountController(UserManager<ApplicationUser> userManager , SignInManager<ApplicationUser> signInManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -37,7 +41,7 @@ namespace OctopaAudioApp.Controllers
 
                 // Copy data from RegisterViewModel to IdentityUser
 
-                var user = new IdentityUser
+                var user = new ApplicationUser
 
                 {
 
@@ -45,7 +49,10 @@ namespace OctopaAudioApp.Controllers
 
                     Email = model.Email,
                     
-                   
+                    CreateDate = DateTime.Now,
+
+                    
+
 
                     //NormalizedUserName = model.UserName, 
 
@@ -91,9 +98,7 @@ namespace OctopaAudioApp.Controllers
 
             }
 
-
-
-            return View(model);
+                    return View(model);
 
         }
         [HttpGet]
@@ -113,31 +118,49 @@ namespace OctopaAudioApp.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
 
         {
-            
-
-            if (ModelState.IsValid)
-
+            try
             {
-
-                var result = await signInManager.PasswordSignInAsync(
-
-                    model.UserName, model.Password, model.RememberMe, false);
-
-                string user = User.Identity.Name;
-
-                if (result.Succeeded)
+                if (ModelState.IsValid)
 
                 {
 
-                    return RedirectToAction("index", "home");
+                    var result = await signInManager.PasswordSignInAsync(
+
+                     model.UserName, model.Password, model.RememberMe, false);
+
+
+
+
+                    if (result.Succeeded)
+
+                    {
+                        var UserDate = await userManager.FindByNameAsync(model.UserName);
+
+                        var expire = (DateTime.Now - UserDate.CreateDate);
+                        if (model.Password == "Audio@123" || expire > TimeSpan.FromSeconds(90))
+                        {
+                            return RedirectToAction("ChangePassword", "Account");
+
+                        }
+                        else
+                        {
+                            return RedirectToAction("index", "home");
+                            //RedirectToAction("ChangePassword", "Account");
+                        }
+                    }
+
+
+
+
 
                 }
-
-
-
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
 
 
 
@@ -152,6 +175,54 @@ namespace OctopaAudioApp.Controllers
 
             return RedirectToAction("Login", "Account");
 
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+
+                var user = await userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+
+                // ChangePasswordAsync changes the user password
+                var result = await userManager.ChangePasswordAsync(user,
+                    model.CurrentPassword, model.NewPassword);
+
+                // The new password did not meet the complexity rules or
+                // the current password is incorrect. Add these errors to
+                // the ModelState and rerender ChangePassword view
+                if (!result.Succeeded)
+                {
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+
+                    return View();
+                }
+
+                // Upon successfully changing the password refresh sign-in cookie
+                user.CreateDate = DateTime.Now;
+                await userManager.UpdateAsync(user);
+                await signInManager.RefreshSignInAsync(user);
+                return View();
+            }
+
+            return View(model);
         }
 
     }

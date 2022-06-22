@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace OctopaAudioApp.Models.AudioDataContext
 {
-    public class AudioDbContext : DbContext
-    {
+    public class AudioDbContext : DbContext    {
         //public AudioDataContext() { }
         public AudioDbContext(DbContextOptions<AudioDbContext> options):base(options)
         {
@@ -21,6 +20,7 @@ namespace OctopaAudioApp.Models.AudioDataContext
 
         public virtual DbSet<AssetStatus> AssetStatuses { get; set; }
         public virtual DbSet<Inputs> Inputs { get; set; }
+        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public virtual DbSet<AssignModel> Assigns { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

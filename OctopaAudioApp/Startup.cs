@@ -9,13 +9,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OctopaAudioApp.Models;
 using OctopaAudioApp.Models.AudioDataContext;
+using OctopaAudioApp.Models.SetupModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OctopaAudioApp
-{
+//namespace OctopaAudioApp
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -29,19 +30,19 @@ namespace OctopaAudioApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.Configure<IdentityOptions>(Option =>
+        services.Configure<IdentityOptions>(Option =>
 
-            {
+        {
 
-                Option.User.RequireUniqueEmail = true;
+            Option.User.RequireUniqueEmail = true;
 
-                Option.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";
+            Option.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";
 
-            });
-            services.AddDbContext<AudioDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("AudioConn")));
+        });
+        services.AddDbContext<AudioDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("AudioConn")));
             services.AddControllersWithViews();
 
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AudioIdentity>();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AudioIdentity>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<DataProtectionTokenProviderOptions>(o =>
@@ -82,4 +83,3 @@ namespace OctopaAudioApp
             });
         }
     }
-}
