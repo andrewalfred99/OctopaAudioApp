@@ -51,6 +51,8 @@ namespace OctopaAudioApp.Controllers
                     
                     CreateDate = DateTime.Now,
 
+                    LastPassWord = model.Password,
+
                     
 
 
@@ -137,7 +139,8 @@ namespace OctopaAudioApp.Controllers
                         var UserDate = await userManager.FindByNameAsync(model.UserName);
 
                         var expire = (DateTime.Now - UserDate.CreateDate);
-                        if (model.Password == "Audio@123" || expire > TimeSpan.FromSeconds(90))
+                        //Audio@123
+                        if (model.Password == "Audio@123" || expire > TimeSpan.FromDays(90))
                         {
                             return RedirectToAction("ChangePassword", "Account");
 
@@ -210,13 +213,21 @@ namespace OctopaAudioApp.Controllers
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
-
+                
 
                     return View();
                 }
-
+                if(model.NewPassword == "Audio@123")
+                {
+                    return Json("please Change Password from the difault password");
+                }
+                else if(model.NewPassword == user.LastPassWord)
+                {
+                    return Json("please Change Password from the difault password");
+                }
                 // Upon successfully changing the password refresh sign-in cookie
                 user.CreateDate = DateTime.Now;
+                user.LastPassWord = model.CurrentPassword;
                 await userManager.UpdateAsync(user);
                 await signInManager.RefreshSignInAsync(user);
                 return View();

@@ -21,19 +21,18 @@ using System.Threading.Tasks;
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+        Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
         services.Configure<IdentityOptions>(Option =>
 
         {
-
             Option.User.RequireUniqueEmail = true;
 
             Option.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";

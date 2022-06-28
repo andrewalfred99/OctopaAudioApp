@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OctopaAudioApp.Models;
 using OctopaAudioApp.Models.Assigning;
@@ -29,6 +30,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
             .Select(A => new { A.e.c.a.SerialNUmber, A.e.c.b.BrandName, A.e.d.TypeName, A.f.StatusName, A.e.c.a.Notes, A.e.c.a.Description, A.e.c.a.Cpu, A.e.c.a.GPU, A.e.c.a.Ram, A.e.c.a.Storage }).ToList();
             return Json(Data);
         }
+        [Authorize]
         public IActionResult Adding()
         {
            
