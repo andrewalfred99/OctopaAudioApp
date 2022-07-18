@@ -1,0 +1,535 @@
+﻿
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Assign Item to a User</title>
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+    <script>
+        function ConvertItemToArray2() {
+            var ItemList = new Array();
+            var UserSearch2 = $("#EmployeDatalist2").val();
+            $('#AddItemToEMP tbody Tr').each(function () {
+                var row = $(this);
+                var Data = {};
+                Data.SerialNUmber = row.find("TD").eq(0).html();
+                //Data.Brand = row.find("TD").eq(1).html();
+                //Data.Discreption = row.find("TD").eq(2).html();
+                ItemList.push(Data);
+            });
+            console.log(ItemList)
+            var Data = { ItemList }
+            $.ajax({
+                type: 'POST',
+                url: '/SetupAssetd/SaveEMPAndItemData?Code=' + C,
+                data: JSON.stringify(Data),
+                contentType: 'application/json; charset=utf-8',
+                datatype: 'json',
+                success: function (result) {
+                    alert('Success ');
+                },
+                error: function (result) {
+                    alert('Fail ');
+                }
+            });
+        }
+        //function SaveMyEMPAndItem() {
+        //    var EMPSearch = $("#EmployeDatalist2").val();
+        //    var ItemSearch = $("#myBrowser").val();
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/SetupAssetd/SaveEMPAndItemData?",
+        //        contentType: "application/json;charset=utf-8",
+        //        datatype: 'json',
+        //        success: function (json) {
+
+        //        }
+        //    })
+        //}
+            function Remove(button) {
+                //Determine the reference of the Row using the Button.
+                var row = $(button).closest("TR");
+                var name = $("TD", row).eq(0).html();
+                if (confirm("Do you want to Delete This Row: " + name)) {
+                    //Get the reference of the Table.
+                    var table = $("#AddItemToEMP")[0];
+                    //Delete the Table row using it's Index.
+                    table.deleteRow(row[0].rowIndex);
+                }
+            };
+            function GetUSerData() {
+                var UserSearch2 = $("#EmployeDatalist2").val();
+                console.log(UserSearch2);
+                $.ajax({
+                    type: "GET",
+                    url: "/SetupAssetd/GetEmpData?Code=" + UserSearch2,
+                    contentType: "application/json;charset=utf-8",
+                    datatype: 'json',
+                    success: function (json) {
+                        console.log(json)
+                        EMPData = json;
+                        if (UserSearch2 == "Select Employee") {
+                            alert("adbadnsa");
+
+                        }
+                        document.getElementById("Code").innerHTML = json.code;
+                        document.getElementById("Name").innerHTML = json.englishName;
+                        document.getElementById("Postion").innerHTML = json.englishPosition;
+                        document.getElementById("Department").innerHTML = json.department;
+                        document.getElementById("DirectManager").innerHTML = json.directManager;
+
+                    }
+                })
+
+            }
+            function GetitemData() {
+                var UserSearch3 = $("#myBrowser").val();
+                console.log(UserSearch3);
+                $.ajax({
+                    type: "GET",
+                    url: "/SetupAssetd/GetSearchedItems?SerialNUmber=" + UserSearch3,
+                    contentType: "application/json;charset=utf-8",
+                    datatype: 'json',
+                    success: function (json) {
+                        console.log(json)
+
+                        document.getElementById("Brand").value = json.brandName;
+                        document.getElementById("Discreption").value = json.description;
+
+                    }
+                })
+
+            }
+            function AddNewRowTwo() {
+                var SerialNo = $("#myBrowser");
+                var Brand = $("#Brand");
+                var Discreption = $("#Discreption");
+                if (SerialNo == "" || Brand == "" || Discreption == "") {
+                    alert("sorry Some of the columns is Empty, please fill all Columns")
+                    return;
+                }
+                else {
+                    var tBody = $("#AddItemToEMP > TBODY")[0];
+                    var row = tBody.insertRow(0);
+
+                    var cell = $(row.insertCell(-1));
+                    cell.html(SerialNo.val());
+
+                    var cell = $(row.insertCell(-1));
+                    cell.html(Brand.val());
+
+                    var cell = $(row.insertCell(-1));
+                    cell.html(Discreption.val());
+
+                    cell = $(row.insertCell(-1));
+
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "Remove(this);");
+                    btnRemove.val("Remove");
+                    btnRemove.addClass("btn btn-danger btn-sm");
+                    cell.append(btnRemove);
+
+                    document.getElementById("myBrowser").value = ""
+                    document.getElementById("Brand").value = ""
+                    document.getElementById("Discreption").value = ""
+
+                }
+            }
+
+
+            function ConvertToArray() {
+                var type = $('#Types :selected').text();
+                var div = $(this);
+                var Data = {};
+                Data.SerialNUmber = document.getElementById("SerialNumberInput").value;
+                Data.Brands = document.getElementById("Brands").value;
+                Data.Types = document.getElementById("Types").value;
+                Data.Cpu = document.getElementById("CPU").value;
+                Data.GPU = document.getElementById("GPU").value;
+                Data.Ram = document.getElementById("Ram").value;
+                Data.Storage = document.getElementById("Storage").value;
+                Data.Status = document.getElementById("Status").value;
+                Data.Description = document.getElementById("Description").value;
+                Data.Notes = document.getElementById("Notes").value;
+                if (Data.Brands == "-1" || Data.Status == "-1" || Data.Types == "-1") {
+                    alert("sorry Some of the inputs Are Empty, please fill all Inputs")
+                }
+                else if (type == "Laptop") {
+                    if (Data.Cpu == "" || Data.GPU == "" || Data.Ram == "" || Data.Storage == "") {
+                        alert("sorry Some of the laptop information Are Empty, please fill all the Laptop Info")
+                    }
+                    else {
+
+                        console.log(Data);
+                        var DataToSend = { Data }
+                        $.ajax({
+                            type: 'POST',
+                            url: '/SetupAssetd/SaveInputData',
+                            data: JSON.stringify(DataToSend),
+                            contentType: 'application/json; charset=utf-8',
+                            datatype: 'json',
+                            success: function (result) {
+                                alert('Success ');
+                                $("#CreateNewItem").modal('hide');
+                                GetData();
+
+
+                            },
+                            error: function (result) {
+                                alert('Fail ');
+                            }
+                        });
+                        document.getElementById("SerialNumberInput").value = ""
+                        document.getElementById("Brands").value = "-1"
+                        document.getElementById("Types").value = "-1"
+                        document.getElementById("Status").value = "-1"
+                        document.getElementById("Description").value = ""
+                        document.getElementById("Notes").value = ""
+                        document.getElementById("CPU").value = ""
+                        document.getElementById("GPU").value = ""
+                        document.getElementById("Ram").value = ""
+                        document.getElementById("Storage").value = ""
+                    }
+                }
+                else {
+                    console.log(Data);
+                    var DataToSend = { Data }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/SetupAssetd/SaveInputData',
+                        data: JSON.stringify(DataToSend),
+                        contentType: 'application/json; charset=utf-8',
+                        datatype: 'json',
+                        success: function (result) {
+                            alert('Success ');
+                            $("#CreateNewItem").modal('hide');
+                            GetData();
+                        },
+                        error: function (result) {
+                            alert('Fail ');
+                        }
+                    });
+                    document.getElementById("SerialNumberInput").value = ""
+                    document.getElementById("Brands").value = "-1"
+                    document.getElementById("Types").value = "-1"
+                    document.getElementById("Status").value = "-1"
+                    document.getElementById("Description").value = ""
+                    document.getElementById("Notes").value = ""
+                    document.getElementById("CPU").value = ""
+                    document.getElementById("GPU").value = ""
+                    document.getElementById("Ram").value = ""
+                    document.getElementById("Storage").value = ""
+                }
+
+            }
+            $(document).ready(function () {
+                GetData();
+                $("#Types").change(function () {
+                    var type = $('#Types :selected').text();
+                    console.log(type);
+                    if (type == "Laptop") {
+                        document.getElementById("ShowToLaptop").style.visibility = "visible";
+
+
+                    }
+                    else {
+                        document.getElementById("ShowToLaptop").style.visibility = "hidden";
+
+                    }
+                });
+            });
+            function GetData() {
+                $.ajax({
+                    type: "GET",
+                    url: "/SetupAssetd/GetAllDataitem",
+                    contentType: "application/json;charset=utf-8",
+                    data: "{}",
+                    dataType: "json",
+                    success: function (json) {
+                        Data = json;
+                        Draw();;
+
+
+                    }
+                });
+            }
+            function Draw() {
+                var html = ''
+                for (var i = 0; i < Data.length; i++) {
+                    html += '<tr>'
+                    html += '<td>'
+                    html += '<option>' + Data[i].serialNUmber + '</option>'
+                    html += '</td>'
+                    html += '</tr>'
+
+                }
+                $('#').html(html);
+            }
+    </script>
+</head>
+
+<body>
+    <div>
+            <label>Employees:</label>
+            <select id="EmployeDatalist2" onchange="GetUSerData()">
+                <option>Select Employee</option>
+                @foreach (var EmployeeList in (IEnumerable<OctopaAudioApp.Models.Employee>)ViewData["EmployeeListData"])
+                 {
+
+                    <option value="@EmployeeList.Code">@EmployeeList.EnglishName</option>
+
+                 }
+            </select>
+           
+        </div>
+        <div class="form-group" id="EmployeeInfo" >
+            <div class="form-group col-sm-6">
+                <label>Code:</label>
+                <label id="Code"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Name:</label>
+                <label id="Name"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Postion:</label>
+                <label id="Postion"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Department:</label>
+                <label id="Department"></label>
+            </div> 
+            <div class="form-group col-sm-6">
+                <label>Direct Manager:</label>
+                <label id="DirectManager"></label>
+            </div>
+            <footer>
+                <table class="table table-bordered table-hover" style="text-align:center" id="AddItemToEMP">
+                    <thead class="bg-dark">
+                        <tr>
+                            <th class="center">Serial Number</th>
+                            <th class="center">Brand</th>
+                            <th class="center">Discreption</th>
+                            <th class="center">Options</th>
+                        </tr>
+                    <tbody id="AddingItemRow">
+                        <tr>
+
+                            <td>
+                                <input list="browsers" id="myBrowser" onchange="GetitemData()" name="myBrowser" />
+                                <datalist id="browsers">
+                                    @foreach (var InputList in (IEnumerable<OctopaAudioApp.Models.SetupModels.Inputs>)ViewData["InputListData"])
+                                    {
+
+                                        <option value="@InputList.SerialNUmber">@InputList.SerialNUmber</option>
+                                    }
+                                    </datalist>
+                            </td>
+
+                            <td><input type="Text" id="Brand" class="form-control" /></td>
+
+                            <td><input type="text" id="Discreption" class="form-control" /></td>
+
+                            <td><input type="button" id="AddButtonToRow" class="btn btn-sm btn-success" onclick="AddNewRowTwo()" value="SAVE" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </footer>
+            <input type="button" class="btn btn-sm btn-secondary" onclick="ConvertItemToArray2()" value="Save Items To Employee" />
+    </div>
+</body>
+
+</html>
+<script>
+   
+    function DisplayEMPInfo() {
+       
+    }
+        function ConvertToArray() {
+            var type = $('#Types :selected').text();
+            var div = $(this);
+            var Data = {};
+            Data.SerialNUmber = document.getElementById("SerialNumberInput").value;
+            Data.Brands = document.getElementById("Brands").value;
+            Data.Types = document.getElementById("Types").value;
+            Data.Cpu = document.getElementById("CPU").value;
+            Data.GPU = document.getElementById("GPU").value;
+            Data.Ram = document.getElementById("Ram").value;
+            Data.Storage = document.getElementById("Storage").value;
+            Data.Status = document.getElementById("Status").value;
+            Data.Description = document.getElementById("Description").value;
+            Data.Notes = document.getElementById("Notes").value;
+            if (Data.Brands == "-1" || Data.Status == "-1" || Data.Types == "-1") {
+                alert("sorry Some of the inputs Are Empty, please fill all Inputs")
+            }
+            else if (type == "Laptop")
+            {
+                if (Data.Cpu == "" || Data.GPU == "" || Data.Ram == "" || Data.Storage == "") {
+                    alert("sorry Some of the laptop information Are Empty, please fill all the Laptop Info")
+                }
+                else {
+
+                    console.log(Data);
+                    var DataToSend = { Data }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/SetupAssetd/SaveInputData',
+                        data: JSON.stringify(DataToSend),
+                        contentType: 'application/json; charset=utf-8',
+                        datatype: 'json',
+                        success: function (result) {
+                            alert('Success ');
+                            $("#CreateNewItem").modal('hide');
+                            GetData();
+
+
+                        },
+                        error: function (result) {
+                            alert('Fail ');
+                        }
+                    });
+                    document.getElementById("SerialNumberInput").value = ""
+                    document.getElementById("Brands").value = "-1"
+                    document.getElementById("Types").value = "-1"
+                    document.getElementById("Status").value = "-1"
+                    document.getElementById("Description").value = ""
+                    document.getElementById("Notes").value = ""
+                    document.getElementById("CPU").value = ""
+                    document.getElementById("GPU").value = ""
+                    document.getElementById("Ram").value = ""
+                    document.getElementById("Storage").value = ""
+                }
+            }
+            else
+            {
+                console.log(Data);
+                var DataToSend = { Data }
+                $.ajax({
+                    type: 'POST',
+                    url: '/SetupAssetd/SaveInputData',
+                    data: JSON.stringify(DataToSend),
+                    contentType: 'application/json; charset=utf-8',
+                    datatype: 'json',
+                    success: function (result) {
+                        alert('Success ');
+                        $("#CreateNewItem").modal('hide');
+                        GetData();
+                    },
+                    error: function (result) {
+                        alert('Fail ');
+                    }
+                });
+                document.getElementById("SerialNumberInput").value = ""
+                document.getElementById("Brands").value = "-1"
+                document.getElementById("Types").value = "-1"
+                document.getElementById("Status").value = "-1"
+                document.getElementById("Description").value = ""
+                document.getElementById("Notes").value = ""
+                document.getElementById("CPU").value = ""
+                document.getElementById("GPU").value = ""
+                document.getElementById("Ram").value = ""
+                document.getElementById("Storage").value = ""
+                 }
+
+        }
+    $(document).ready(function () {
+        GetData();
+        $("#Types").change(function () {
+            var type = $('#Types :selected').text();
+            console.log(type);
+            if (type=="Laptop") {
+                document.getElementById("ShowToLaptop").style.visibility = "visible";
+
+
+            }
+            else {
+                document.getElementById("ShowToLaptop").style.visibility = "hidden";
+
+            }
+        });
+    });
+    function GetData() {
+        $.ajax({
+            type: "GET",
+            url: "/SetupAssetd/GetAllDataitem",
+            contentType: "application/json;charset=utf-8",
+            data: "{}",
+            dataType:"json",
+            success: function (json) {
+                Data = json;
+                Draw();;
+
+
+            }
+        });
+    }
+    function Draw() {
+        var html = ''
+        for (var i = 0; i < Data.length; i++) {
+            html += '<tr>'
+            html += '<td>' + Data[i].serialNUmber + '</td>'
+            html += '<td>' + Data[i].typeName + '</td>'
+            html += '<td>' + Data[i].brandName + '</td>'
+            html += '<td>' + Data[i].statusName + '</td>'
+            html += '<td>' + Data[i].description + '</td>'
+            html += '<td>' + Data[i].notes + '</td>'
+            html += '<td>' + Data[i].cpu + '</td>'
+            html += '<td>' + Data[i].gpu + '</td>'
+            html += '<td>' + Data[i].ram + '</td>'
+            html += '<td>' + Data[i].storage + '</td>'
+            html += '<td>' + <input type="button" class="btn btn-sm btn-success" onclick="ConvertToArray()" id="COnvertToArray" value="Add" /> + '</td>'
+
+            html += '</tr>'
+
+        }
+        $('#ALlItem').html(html);
+    }
+    $("#ItemSearch").on("keyup", function () {
+
+        var value = $(this).val().toLowerCase();
+
+        $("#Items tr").filter(function () {
+
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+
+        });
+
+    });
+
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/SetupAssetd/GetEmpDat",
+        //    contentType: "application/json;charset=utf-8",
+        //    dataType: "json",
+        //    success: function (json) {
+        //      var find = code.where()
+        //    };
+        //});
+    //function Search() {
+    //    var input = document.getElementById("myInput");
+    //    var filter = input.value.toUpperCase();
+    //    var table = document.getElementById("Table1111");
+    //    var tr = table.getElementsByTagName("tr");
+    //    for (i = 0; i < tr.length; i++) {
+    //            txtValue = tr.textContent || tr.innerText;
+    //            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    //                tr[i].style.display = "";
+    //            } else {
+    //                tr[i].style.display = "none";
+    //            }
+    //    }
+    //}
+    //function ShowMoreOptions() {
+    //    var Select = document.getElementById("Types");
+    //    var ShowToLaptop = document.getElementById("ShowToLaptop");
+    //    var TypeOptions = document.getElementById("TypeOptions");
+    //    Select.addEventListener("change", function HandleChange(event) {
+    //        if (event.target.name === "Laptop") {
+    //            document.getElementById("ShowToLaptop").style.visibility = "visible";
+
+    //        } else {
+    //            ShowToLaptop.style.display = "hidden";
+    //        }
+    //    });
+    //}
+</script>

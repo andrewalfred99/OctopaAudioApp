@@ -22,15 +22,47 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             _Context = context;
         }
-
         public JsonResult GetAllDataitem()
         {
             var Data = _Context.Inputs.Join(_Context.AssetBrands, a => a.Brands, b => b.Code, (a, b) => new { a, b })
             .Join(_Context.AssetTypes, c => c.a.Types, d => d.Code, (c, d) => new { c, d }).Join(_Context.AssetStatuses, e => e.c.a.Status, f => f.Code, (e, f) => new { e, f })
             .Select(A => new { A.e.c.a.SerialNUmber, A.e.c.b.BrandName, A.e.d.TypeName, A.f.StatusName, A.e.c.a.Notes, A.e.c.a.Description, A.e.c.a.Cpu, A.e.c.a.GPU, A.e.c.a.Ram, A.e.c.a.Storage }).ToList();
+
+           
             return Json(Data);
         }
-        [Authorize]
+        [HttpGet]
+        public JsonResult GetEmpData(int Code)
+        {
+            var find = _Context.Employees.Where(s => s.Code == Code).FirstOrDefault();
+            return Json(find);
+        }
+
+        public JsonResult SaveEMPAndItemData(int Code, [FromBody] ALLDataView aLLDataView)
+        {
+            try
+            {
+                foreach (var item in aLLDataView.EmployeAssets)
+                {
+                    EmployeAsset NewE = new EmployeAsset();
+                    NewE.UserID = Code;
+                    NewE.SerialNUmber = item.SerialNUmber;
+                    NewE.AddedUser = User.Identity.Name;
+                    NewE.DateUpdate = DateTime.Now;
+                    _Context.EmployeAssets.Add(NewE);
+                    _Context.SaveChanges();
+                }
+
+                return Json("okay");
+            }
+            catch (Exception ex) 
+            {
+                throw;
+            }
+
+            
+        }
+
         public IActionResult Adding()
         {
            
@@ -107,7 +139,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
         public IActionResult CreateNewStatus()
         {
             var StatusList = _Context.AssetStatuses.ToList();
-            ViewData["StatusListData"] = StatusList;
+            ////ViewData["StatusListData"] = StatusList;
             return View();
         }
         public ActionResult EditStatus(int Code)
@@ -330,6 +362,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 throw;
             }
         }
+        
         [HttpPost]
         public JsonResult OpenPopupType(int Code)
         {
@@ -378,5 +411,33 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 throw;
             }
         }
-    }
+        public IActionResult ItemToUser()
+        {
+            var EMPData = _Context.Employees.FirstOrDefault();
+            var EmployeeList = _Context.Employees.ToList();
+            var BrandList = _Context.AssetBrands.ToList();
+            var TypeList = _Context.AssetTypes.ToList();
+            var StatusList = _Context.AssetStatuses.ToList();
+            var inputList = _Context.Inputs.ToList();
+            
+
+            ViewData["TypeListData"] = TypeList;
+            ViewData["InputListData"] = inputList;
+            ViewData["StatusListData"] = StatusList;
+            ViewData["BrandListData"] = BrandList;
+            ViewData["EmployeeListData"] = EmployeeList;
+
+
+            return View();
+        }
+        [HttpGet]
+        public JsonResult GetSearchedItems(string SerialNUmber)
+        {
+            var BrandName = _Context.Inputs.Join(_Context.AssetBrands, a => a.Brands, b => b.Code, (a, b) => new { a, b }).Select(A => new { A.a.SerialNUmber, A.b.BrandName, A.a.Description }).Where(s => s.SerialNUmber == SerialNUmber).FirstOrDefault();
+
+            //var findItem = _Context.Inputs.Where(s => s.SerialNUmber == SerialNUmber).FirstOrDefault();
+            return Json(BrandName);
+        }
+
+    }   
 }

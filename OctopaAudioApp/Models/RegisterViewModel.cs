@@ -51,5 +51,7 @@ namespace OctopaAudioApp.Models
         public DateTime PasswordCreationStamp { get; set; }
 
         public DateTime CreateDate { get; set; }
+
+        public string LastPassWord { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using OctopaAudioApp.Models.Assigning;
 using OctopaAudioApp.Models.SetupModels;
 using System;
@@ -23,8 +24,16 @@ namespace OctopaAudioApp.Models.AudioDataContext
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public virtual DbSet<AssignModel> Assigns { get; set; }
+
+        public virtual DbSet<EmployeAsset> EmployeAssets { get; set; }
+        
+        public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<ItemView> ItemViews { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<EmployeAsset>()
+                .HasKey(c => new { c.UserID, c.SerialNUmber });
             //modelBuilder.Entity<ass>
         }
     }

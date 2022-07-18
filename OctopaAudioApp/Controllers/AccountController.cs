@@ -221,7 +221,7 @@ namespace OctopaAudioApp.Controllers
                 {
                     return Json("please Change Password from the difault password");
                 }
-                else if(model.NewPassword == user.LastPassWord)
+                else if (model.NewPassword == user.LastPassWord)
                 {
                     return Json("please Change Password from the difault password");
                 }

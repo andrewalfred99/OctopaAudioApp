@@ -274,9 +274,6 @@
                                     <a data-toggle="modal" data-target="#ChangePass"><i class="fa fa-lock"></i> Change Pass</a>
                                 </li>
                                 <li>
-                                    @if (!SignInManager.IsSignedIn(User)) {
-                                        
-                                    }
                                     @if (SignInManager.IsSignedIn(User))
                                     {
                                         var UserDate2 = await userManager.GetUserAsync(User);
@@ -480,8 +477,12 @@
                                                 <a asp-controller="SetupAssetd" asp-action="Adding">Items</a>
                                             </li>
                                             <li>
+                                                <a asp-controller="SetupAssetd" asp-action="ItemToUser">ItemToUser</a>
+                                            </li>
+                                            <li>
                                                 <a asp-controller="Account" asp-action="ChangePassword">Change pass</a>
                                             </li>
+
                                         </ul>
 
                                     </li>

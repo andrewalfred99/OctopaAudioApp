@@ -11,5 +11,7 @@ namespace OctopaAudioApp.Models
     {
         public List<AssignModel> ExcelList { get; set; }
         public Inputs Data { get; set; }
+        
+        public List<EmployeAsset> EmployeAssets { get; set; }
     }
 }
