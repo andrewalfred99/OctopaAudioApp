@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Assigend Details</title>
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+    <script>
+        function GetAssignedEMPData() {
+            var UserSearch2 = $("#EmployeDatalist2").val();
+            console.log(UserSearch2);
+            $.ajax({
+                type: "GET",
+                url: "/SetupAssetd/GetSearchedIAssigendEMP?EmployeeCode=" + UserSearch2,
+                contentType: "application/json;charset=utf-8",
+                datatype: 'json',
+                success: function (json) {
+                    console.log(json)
+                        Data = json;
+                        DrawItemsAssignedToEMP();;
+                        if (UserSearch2 == "Select Employee") {
+                            alert("adbadnsa");
+
+                        }
+                    document.getElementById("Name").innerHTML = json.assignedEMPDetails.englishName;
+                    document.getElementById("Postion").innerHTML = json.assignedEMPDetails.englishPosition;
+                    document.getElementById("Department").innerHTML = json.assignedEMPDetails.department;
+                    document.getElementById("DirectManager").innerHTML = json.assignedEMPDetails.directManager;
+                        var html = ''
+                    for (var i = 0; i < json.assignedItemDatails.length; i++) {
+                            html += '<tr>'
+                            html += '<td>' + json.assignedItemDatails[i].serialNUmber + '</td>'
+                        html += '<td>' + json.assignedItemDatails[i].brandName + '</td>'
+                            html += '<td>' + json.assignedItemDatails[i].description + '</td>'
+                            html += '</tr>'
+
+                        }
+                    $('#ItemsBody').html(html);
+                    }
+                
+            })
+
+        }
+        function DrawItemsAssignedToEMP() {
+            var html = ''
+            for (var i = 0; i < Data.length; i++) {
+                html += '<tr>'
+                html += '<td>' + Data[i].assignedItemDatails.serialNUmber + '</td>'
+                html += '<td>' + Data[i].assignedItemDatails.brandName + '</td>'
+                html += '<td>' + Data[i].assignedItemDatails.description + '</td>'
+                html += '</tr>'
+
+            }
+            $('#ItemsBody').html(html);
+        }
+
+
+    
+    </script>
+
+</head>
+<body>
+    <div>
+        <label>Employee Code:</label>
+        <select id="EmployeDatalist2" onchange="GetAssignedEMPData()">
+            <option>Select Employee</option>
+            @foreach (var EmployeeList in (IEnumerable<OctopaAudioApp.Models.Employee>)ViewData["EmployeeListData"])
+            {
+
+                <option value="@EmployeeList.Code">@EmployeeList.Code</option>
+
+            }
+        </select>
+
+    </div>
+    <div class="form-group" id="EmployeeInfo">
+        <div class="form-group col-sm-6">
+            <label>Name:</label>
+            <label id="Name"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Postion:</label>
+            <label id="Postion"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Department:</label>
+            <label id="Department"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Direct Manager:</label>
+            <label id="DirectManager"></label>
+        </div>
+        <footer>
+            <table class="table table-bordered table-hover" style="text-align:center" id="ItemsAssigendTable">
+                <thead class="bg-dark">
+                    <tr>
+                        <th class="center">Serial Number</th>
+                        <th class="center">Brand</th>
+                        <th class="center">Discreption</th>
+                    </tr>
+                <tbody id="ItemsBody">  
+                </tbody>
+            </table>
+        </footer>
+    </div>
+    
+</body>
+</html>

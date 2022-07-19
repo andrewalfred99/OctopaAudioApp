@@ -33,7 +33,7 @@ namespace OctopaAudioApp.Models.AudioDataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EmployeAsset>()
-                .HasKey(c => new { c.UserID, c.SerialNUmber });
+                .HasKey(c => new { c.EmployeID, c.SerialNUmber });
             //modelBuilder.Entity<ass>
         }
     }

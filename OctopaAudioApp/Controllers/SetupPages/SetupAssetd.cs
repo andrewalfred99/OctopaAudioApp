@@ -42,10 +42,10 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             try
             {
-                foreach (var item in aLLDataView.EmployeAssets)
+                foreach (var item in aLLDataView.ItemArray)
                 {
                     EmployeAsset NewE = new EmployeAsset();
-                    NewE.UserID = Code;
+                    NewE.EmployeID = Code;
                     NewE.SerialNUmber = item.SerialNUmber;
                     NewE.AddedUser = User.Identity.Name;
                     NewE.DateUpdate = DateTime.Now;
@@ -113,11 +113,11 @@ namespace OctopaAudioApp.Controllers.SetupPages
         }
         
             public IActionResult CreateNewType()
-        {
+            {
             var TypeList = _Context.AssetTypes.ToList();
             ViewData["TypeListData"] = TypeList;
             return View();
-        }
+            }
         public JsonResult SaveNewType(string TypeName)
         {
             try
@@ -142,6 +142,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
             ////ViewData["StatusListData"] = StatusList;
             return View();
         }
+       
         public ActionResult EditStatus(int Code)
         {
             var StatusList = _Context.AssetStatuses.ToList();
@@ -430,6 +431,14 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
             return View();
         }
+        public IActionResult AssignedDetails()
+        {
+            var EmployeeAsset = _Context.EmployeAssets.ToList();
+            var EmployeeList = _Context.Employees.ToList();
+            ViewData["EmployeeListData"] = EmployeeList;
+            ViewData["EmployeeAssetListData"] = EmployeeAsset;
+            return View();
+        }
         [HttpGet]
         public JsonResult GetSearchedItems(string SerialNUmber)
         {
@@ -437,6 +446,27 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
             //var findItem = _Context.Inputs.Where(s => s.SerialNUmber == SerialNUmber).FirstOrDefault();
             return Json(BrandName);
+        }
+        [HttpGet]
+        public JsonResult GetSearchedAssigendItems(string SerialNUmber)
+        {
+            var AssignedItemDeatais = _Context.EmployeAssets.Join(_Context.Inputs, c => c.SerialNUmber, d => d.SerialNUmber, (c, d) => new { c, d }).Select(A => new { A.c.SerialNUmber, A.d.Description, A.d.Brands }).Where(s => s.SerialNUmber == SerialNUmber).FirstOrDefault();
+            return Json(AssignedItemDeatais);
+        }
+        [HttpGet]
+        public JsonResult GetSearchedIAssigendEMP(int EmployeeCode, string SerialNUmber)
+        {
+            //var AssignedEMPDeatais = _Context.EmployeAssets.Join(_Context.Employees, a => a.EmployeID, b => b.Code, (a, b) => new { a, b }).Select(A => new { A.a.EmployeID, A.b.EnglishName, A.b.EnglishPosition, A.b.Department, A.b.DirectManager }).Where(s => s.EmployeID == EmployeeCode).FirstOrDefault();
+            var AssignedEMPDetails = _Context.Employees.Join(_Context.EmployeAssets, a => a.Code, b => b.EmployeID, (a, b) => new { a, b })
+                .Select(A => new { A.b.EmployeID, A.a.EnglishName, A.a.EnglishPosition, A.a.Department, A.a.DirectManager, A.a.Code })
+                .Where(s => s.Code == EmployeeCode).FirstOrDefault();
+            var AssignedItemDatails = _Context.EmployeAssets
+                .Join(_Context.Inputs, a => a.SerialNUmber, b => b.SerialNUmber, (a, b) => new { a, b })
+                .Join(_Context.AssetBrands, c => c.b.Brands, d => d.Code, (c, d) => new { c, d })
+                .Where(s => s.c.a.EmployeID  == EmployeeCode)
+                .Select(A => new { A.c.a.SerialNUmber, A.c.b.Description, A.c.b.Brands, A.d.BrandName}).ToList();
+            var AllAssinged = new { AssignedEMPDetails, AssignedItemDatails};
+            return Json(AllAssinged);
         }
 
     }   

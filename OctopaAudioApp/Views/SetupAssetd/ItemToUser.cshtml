@@ -6,21 +6,19 @@
     <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
     <script>
         function ConvertItemToArray2() {
-            var ItemList = new Array();
+            var ItemArray = new Array();
             var UserSearch2 = $("#EmployeDatalist2").val();
-            $('#AddItemToEMP tbody Tr').each(function () {
+            $('#ItemsTable tbody tr').each(function () {
                 var row = $(this);
                 var Data = {};
-                Data.SerialNUmber = row.find("TD").eq(0).html();
-                //Data.Brand = row.find("TD").eq(1).html();
-                //Data.Discreption = row.find("TD").eq(2).html();
-                ItemList.push(Data);
+                Data.SerialNUmber = row.find("td").eq(0).html();
+                ItemArray.push(Data);
             });
-            console.log(ItemList)
-            var Data = { ItemList }
+            console.log(ItemArray)
+            var Data = { ItemArray }
             $.ajax({
                 type: 'POST',
-                url: '/SetupAssetd/SaveEMPAndItemData?Code=' + C,
+                url: '/SetupAssetd/SaveEMPAndItemData?Code=' + UserSearch2,
                 data: JSON.stringify(Data),
                 contentType: 'application/json; charset=utf-8',
                 datatype: 'json',
@@ -51,7 +49,7 @@
                 var name = $("TD", row).eq(0).html();
                 if (confirm("Do you want to Delete This Row: " + name)) {
                     //Get the reference of the Table.
-                    var table = $("#AddItemToEMP")[0];
+                    var table = $("#ItemsTable")[0];
                     //Delete the Table row using it's Index.
                     table.deleteRow(row[0].rowIndex);
                 }
@@ -108,7 +106,7 @@
                     return;
                 }
                 else {
-                    var tBody = $("#AddItemToEMP > TBODY")[0];
+                    var tBody = $("#ItemsTable > TBODY")[0];
                     var row = tBody.insertRow(0);
 
                     var cell = $(row.insertCell(-1));
@@ -282,60 +280,70 @@
             </select>
            
         </div>
-        <div class="form-group" id="EmployeeInfo" >
-            <div class="form-group col-sm-6">
-                <label>Code:</label>
-                <label id="Code"></label>
-            </div>
-            <div class="form-group col-sm-6">
-                <label>Name:</label>
-                <label id="Name"></label>
-            </div>
-            <div class="form-group col-sm-6">
-                <label>Postion:</label>
-                <label id="Postion"></label>
-            </div>
-            <div class="form-group col-sm-6">
-                <label>Department:</label>
-                <label id="Department"></label>
-            </div> 
-            <div class="form-group col-sm-6">
-                <label>Direct Manager:</label>
-                <label id="DirectManager"></label>
-            </div>
-            <footer>
-                <table class="table table-bordered table-hover" style="text-align:center" id="AddItemToEMP">
-                    <thead class="bg-dark">
-                        <tr>
-                            <th class="center">Serial Number</th>
-                            <th class="center">Brand</th>
-                            <th class="center">Discreption</th>
-                            <th class="center">Options</th>
-                        </tr>
-                    <tbody id="AddingItemRow">
-                        <tr>
+    <div class="form-group" id="EmployeeInfo">
+        <div class="form-group col-sm-6">
+            <label>Code:</label>
+            <label id="Code"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Name:</label>
+            <label id="Name"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Postion:</label>
+            <label id="Postion"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Department:</label>
+            <label id="Department"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Direct Manager:</label>
+            <label id="DirectManager"></label>
+        </div>
+      
+        <footer>
+            <table class="table table-bordered table-hover" style="text-align:center" id="ItemsTable">
+                <thead class="bg-dark">
+                    <tr>
+                        <th class="center">Serial Number</th>
+                        <th class="center">Brand</th>
+                        <th class="center">Discreption</th>
+                        <th class="center">Options</th>
+                    </tr>
+                <tbody id="ItemsBody">
+                </tbody>
+            </table>
+        </footer>
 
-                            <td>
-                                <input list="browsers" id="myBrowser" onchange="GetitemData()" name="myBrowser" />
-                                <datalist id="browsers">
-                                    @foreach (var InputList in (IEnumerable<OctopaAudioApp.Models.SetupModels.Inputs>)ViewData["InputListData"])
-                                    {
+        <table class="table table-bordered table-hover" style="text-align:center" id="ItemsTable2">
+            <thead class="bg-dark">
+                <tr>
+                    <th class="center">Serial Number</th>
+                    <th class="center">Brand</th>
+                    <th class="center">Discreption</th>
+                    <th class="center">Options</th>
+                </tr>
+            <tbody id="ItemsBody2">
+                <tr>
+                    <td><input list="browsers" id="myBrowser" onchange="GetitemData()" class="form-control" /></td>
 
-                                        <option value="@InputList.SerialNUmber">@InputList.SerialNUmber</option>
-                                    }
-                                    </datalist>
-                            </td>
+                    <td><input type="Text" id="Brand" class="form-control" /></td>
 
-                            <td><input type="Text" id="Brand" class="form-control" /></td>
+                    <td><input type="text" id="Discreption" class="form-control" /></td>
 
-                            <td><input type="text" id="Discreption" class="form-control" /></td>
+                    <td><input type="button" id="AddButtonToRow" class="btn btn-sm btn-success" onclick="AddNewRowTwo()" value="Add" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="button" class="btn btn-sm btn-secondary" onclick="ConvertItemToArray2()" value="Save Items To Employee" />
+        <datalist id="browsers">
+            @foreach (var InputList in (IEnumerable<OctopaAudioApp.Models.SetupModels.Inputs>)ViewData["InputListData"])
+            {
 
-                            <td><input type="button" id="AddButtonToRow" class="btn btn-sm btn-success" onclick="AddNewRowTwo()" value="SAVE" /></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </footer>
-            <input type="button" class="btn btn-sm btn-secondary" onclick="ConvertItemToArray2()" value="Save Items To Employee" />
+                <option value="@InputList.SerialNUmber">@InputList.SerialNUmber</option>
+            }
+        </datalist>
     </div>
 </body>
 

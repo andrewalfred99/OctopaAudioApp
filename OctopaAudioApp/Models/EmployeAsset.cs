@@ -12,8 +12,7 @@ namespace OctopaAudioApp.Models
     public class EmployeAsset
     {
         [Key]
-        
-        public int UserID { get; set; }
+        public int EmployeID { get; set; }
         [Key]
        
         public string SerialNUmber { get; set; }
