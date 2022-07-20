@@ -59,20 +59,20 @@
                 console.log(UserSearch2);
                 $.ajax({
                     type: "GET",
-                    url: "/SetupAssetd/GetEmpData?Code=" + UserSearch2,
+                    url: "/SetupAssetd/GetEmpData?EMPCode=" + UserSearch2,
                     contentType: "application/json;charset=utf-8",
                     datatype: 'json',
                     success: function (json) {
                         console.log(json)
                         EMPData = json;
                         if (UserSearch2 == "Select Employee") {
-                            alert("adbadnsa");
+                            alert("Please Select Employee to search");
 
                         }
                         document.getElementById("Code").innerHTML = json.code;
                         document.getElementById("Name").innerHTML = json.englishName;
                         document.getElementById("Postion").innerHTML = json.englishPosition;
-                        document.getElementById("Department").innerHTML = json.department;
+                        document.getElementById("Department").innerHTML = json.name;
                         document.getElementById("DirectManager").innerHTML = json.directManager;
 
                     }

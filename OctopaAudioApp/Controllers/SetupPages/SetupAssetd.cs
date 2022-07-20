@@ -32,9 +32,9 @@ namespace OctopaAudioApp.Controllers.SetupPages
             return Json(Data);
         }
         [HttpGet]
-        public JsonResult GetEmpData(int Code)
+        public JsonResult GetEmpData(int EMPCode)
         {
-            var find = _Context.Employees.Where(s => s.Code == Code).FirstOrDefault();
+            var find = _Context.Employees.Join(_Context.Departments, a=> a.Department, b => b.Code, (a,b) => new {a, b}).Select(A => new {A.a.EnglishName, A.a.EnglishPosition, A.a.DirectManager, A.b.Name, A.a.Code}).Where(s => s.Code == EMPCode).FirstOrDefault();
             return Json(find);
         }
 
@@ -435,8 +435,10 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             var EmployeeAsset = _Context.EmployeAssets.ToList();
             var EmployeeList = _Context.Employees.ToList();
+            var inputList = _Context.Inputs.ToList();
             ViewData["EmployeeListData"] = EmployeeList;
             ViewData["EmployeeAssetListData"] = EmployeeAsset;
+            ViewData["InputListData"] = inputList;
             return View();
         }
         [HttpGet]
@@ -458,14 +460,26 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             //var AssignedEMPDeatais = _Context.EmployeAssets.Join(_Context.Employees, a => a.EmployeID, b => b.Code, (a, b) => new { a, b }).Select(A => new { A.a.EmployeID, A.b.EnglishName, A.b.EnglishPosition, A.b.Department, A.b.DirectManager }).Where(s => s.EmployeID == EmployeeCode).FirstOrDefault();
             var AssignedEMPDetails = _Context.Employees.Join(_Context.EmployeAssets, a => a.Code, b => b.EmployeID, (a, b) => new { a, b })
-                .Select(A => new { A.b.EmployeID, A.a.EnglishName, A.a.EnglishPosition, A.a.Department, A.a.DirectManager, A.a.Code })
+                .Join(_Context.Departments, c => c.a.Department, d => d.Code, (c,d) => new {c,d})
+                .Select(A => new { A.c.b.EmployeID, A.c.a.EnglishName, A.c.a.EnglishPosition, A.d.Name, A.c.a.DirectManager, A.c.a.Code })
                 .Where(s => s.Code == EmployeeCode).FirstOrDefault();
+
             var AssignedItemDatails = _Context.EmployeAssets
                 .Join(_Context.Inputs, a => a.SerialNUmber, b => b.SerialNUmber, (a, b) => new { a, b })
                 .Join(_Context.AssetBrands, c => c.b.Brands, d => d.Code, (c, d) => new { c, d })
-                .Where(s => s.c.a.EmployeID  == EmployeeCode)
-                .Select(A => new { A.c.a.SerialNUmber, A.c.b.Description, A.c.b.Brands, A.d.BrandName}).ToList();
-            var AllAssinged = new { AssignedEMPDetails, AssignedItemDatails};
+                .Where(s => s.c.a.EmployeID == EmployeeCode)
+                .Select(A => new { A.c.a.SerialNUmber, A.c.b.Description, A.c.b.Brands, A.d.BrandName }).ToList();
+
+            var AssignedItemToEMP = _Context.EmployeAssets
+                .Join(_Context.Inputs, a => a.SerialNUmber, b => b.SerialNUmber, (a, b) => new { a, b })
+                .Join(_Context.Employees, c => c.a.EmployeID, d => d.Code, (c, d) => new { c, d })
+                .Join(_Context.AssetBrands, e => e.c.b.Brands, f => f.Code, (e, f) => new { e, f })
+                .Join(_Context.AssetTypes, j => j.e.c.b.Types, g => g.Code, (j, g) => new {j,g})
+                .Join(_Context.Departments, h => h.j.e.d.Department, i => i.Code, (h, i) => new {h,i} )
+                .Where(s => s.h.j.e.c.a.SerialNUmber == SerialNUmber)
+                .Select(A => new { A.h.j.e.c.a.EmployeID, A.h.j.e.d.EnglishName, A.h.j.e.d.EnglishPosition, A.h.j.e.d.DirectManager, A.h.j.f.BrandName, A.h.j.e.c.b.Description, A.h.g.TypeName, A.i.Name,A.h.j.e.c.a.SerialNUmber }).FirstOrDefault();
+            
+            var AllAssinged = new { AssignedEMPDetails, AssignedItemDatails, AssignedItemToEMP };
             return Json(AllAssinged);
         }
 

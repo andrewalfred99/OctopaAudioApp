@@ -16,13 +16,21 @@
                     console.log(json)
                         Data = json;
                         DrawItemsAssignedToEMP();;
-                        if (UserSearch2 == "Select Employee") {
-                            alert("adbadnsa");
+                    if (UserSearch2 == "Select Employee") {
+                       alert("Please Select Employee TO search");
 
-                        }
+                    }
+                    if (json.assignedEMPDetails == null) {
+                       
+                        document.getElementById("Name").innerHTML = null;
+                        document.getElementById("Postion").innerHTML = null;
+                        document.getElementById("Department").innerHTML = null;
+                        document.getElementById("DirectManager").innerHTML = null;
+                        return alert("This Employee dosent have any item assigend to him")
+                    }
                     document.getElementById("Name").innerHTML = json.assignedEMPDetails.englishName;
                     document.getElementById("Postion").innerHTML = json.assignedEMPDetails.englishPosition;
-                    document.getElementById("Department").innerHTML = json.assignedEMPDetails.department;
+                    document.getElementById("Department").innerHTML = json.assignedEMPDetails.name;
                     document.getElementById("DirectManager").innerHTML = json.assignedEMPDetails.directManager;
                         var html = ''
                     for (var i = 0; i < json.assignedItemDatails.length; i++) {
@@ -34,11 +42,52 @@
 
                         }
                     $('#ItemsBody').html(html);
-                    }
+                }
                 
             })
 
         }
+        function GetAssignedItemData() {
+            var UserSearch3 = $("#txtitem").val();
+            console.log(UserSearch3);
+            $.ajax({
+                type: "GET",
+                url: "/SetupAssetd/GetSearchedIAssigendEMP?SerialNUmber=" + UserSearch3,
+                contentType: "application/json;charset=utf-8",
+                datatype: 'json',
+                success: function (json) {
+                    console.log(json)
+                    Data = json;
+                    if (UserSearch3 == "Select Item") {
+                        alert("Please Selcet an Item To Search");
+
+                    }
+                    if (json.assignedItemToEMP == null) {
+                        document.getElementById("ItemDescription").innerHTML = null;
+                        document.getElementById("Brand").innerHTML = null;
+                        document.getElementById("Type").innerHTML = null;
+                        document.getElementById("ItemTOEmployeeCode").innerHTML = null;
+                        document.getElementById("ItemEMPName").innerHTML = null;
+                        document.getElementById("ItemEMPPostion").innerHTML = null;
+                        document.getElementById("ItemEMPDepartment").innerHTML = null;
+                        document.getElementById("ItemEMPDirectManager").innerHTML = null;
+                        return alert("This Item Serial is invalid or is not Assigned To an Employe")
+
+                    }
+                    document.getElementById("ItemDescription").innerHTML = json.assignedItemToEMP.description;
+                    document.getElementById("Brand").innerHTML = json.assignedItemToEMP.brandName;
+                    document.getElementById("Type").innerHTML = json.assignedItemToEMP.typeName;
+                    document.getElementById("ItemTOEmployeeCode").innerHTML = json.assignedItemToEMP.employeID;
+                    document.getElementById("ItemEMPName").innerHTML = json.assignedItemToEMP.englishName;
+                    document.getElementById("ItemEMPPostion").innerHTML = json.assignedItemToEMP.englishPosition;
+                    document.getElementById("ItemEMPDepartment").innerHTML = json.assignedItemToEMP.name;
+                    document.getElementById("ItemEMPDirectManager").innerHTML = json.assignedItemToEMP.directManager;
+
+                }
+            })
+        }
+
+        
         function DrawItemsAssignedToEMP() {
             var html = ''
             for (var i = 0; i < Data.length; i++) {
@@ -96,11 +145,52 @@
                         <th class="center">Brand</th>
                         <th class="center">Discreption</th>
                     </tr>
-                <tbody id="ItemsBody">  
+                <tbody id="ItemsBody">
                 </tbody>
             </table>
         </footer>
     </div>
-    
+    <div class="col-sm-4">
+        <label>Item Serial Number:</label>
+        <input id="txtitem" />
+        <input type="button" id="txtitem" value="Search" class="btn btn-success" onclick="GetAssignedItemData()" />
+    </div>
+    <div class="form-group" id="ItemInfo">
+        <div class="form-group col-sm-6">
+            <label>Description:</label>
+            <label id="ItemDescription"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Brand:</label>
+            <label id="Brand"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Type:</label>
+            <label id="Type"></label>
+        </div>
+    </div>
+    <div>
+        <div class="form-group col-sm-6">
+            <label> Employee Code:</label>
+            <label id="ItemTOEmployeeCode"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Name:</label>
+            <label id="ItemEMPName"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Postion:</label>
+            <label id="ItemEMPPostion"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Department:</label>
+            <label id="ItemEMPDepartment"></label>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Direct Manager:</label>
+            <label id="ItemEMPDirectManager"></label>
+        </div>
+    </div>
 </body>
+
 </html>

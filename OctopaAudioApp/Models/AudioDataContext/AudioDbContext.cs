@@ -30,6 +30,8 @@ namespace OctopaAudioApp.Models.AudioDataContext
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<ItemView> ItemViews { get; set; }
 
+        public virtual DbSet<Department> Departments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EmployeAsset>()
