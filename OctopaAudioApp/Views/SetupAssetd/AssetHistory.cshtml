@@ -1,0 +1,179 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Assigend Details</title>
+    <script src="~/Scripts/jquery-1.11.3.min.js">
+
+    </script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <link href="~/bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/bootstrap-3.3.6-dist/js/bootstrap.js"></script>
+
+    <script src="https://lipis.github.io/bootstrap-sweetalert/lib/sweet-alert.js"></script>
+    <link href="~/Content/sweetalert/sweet-alert.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+    <script>
+        var Details = [];
+        function GetAssignedItemData() {
+            var UserSearch3 = $("#txtitem").val();
+            console.log(UserSearch3);
+            $.ajax({
+                type: "GET",
+                url: "/SetupAssetd/GetSearchedIAssigendEMP?SerialNUmber=" + UserSearch3,
+                contentType: "application/json;charset=utf-8",
+                datatype: 'json',
+                success: function (json) {
+                    console.log(json)
+                    //Data = json;
+                    ////Details = json.assetHistoryList;
+                    var html = ''
+                    for (var i = 0; i < json.assetHistoryList.length; i++) {
+                        html += '<tr>'
+                        html += '<td>' + json.assetHistoryList[i].dateUpdate + '</td>'
+                        html += '<td>' + json.assetHistoryList[i].changes + '</td>'
+                        html += '<td>' + json.showStatusName[i].statusName + '</td>'
+                        html += '<td>' + json.assetHistoryList[i].avilabiltyStatus + '</td>'
+                        html += '<td>' + json.assetHistoryList[i].assigendEMP + '</td>'
+                        html += '</tr>'
+                    }
+                    $('#ItemsBody').html(html);
+                    /*                    HistoryOfAsset();;*/
+                    if (UserSearch3 == "Select Item") {
+                        alert("Please Selcet an Item To Search");
+
+                    }
+                    if (json.assignedItemToEMP == null) {
+                        if (json.assetHistorywihtoutEMP == null) {
+                            document.getElementById("ItemDescription").innerHTML = null;
+                            document.getElementById("Brand").innerHTML = null;
+                            document.getElementById("Type").innerHTML = null;
+                            document.getElementById("ItemTOEmployeeCode").innerHTML = null;
+                            document.getElementById("ItemEMPName").innerHTML = null;
+                            document.getElementById("ItemEMPPostion").innerHTML = null;
+                            document.getElementById("ItemEMPDepartment").innerHTML = null;
+                            document.getElementById("ItemEMPDirectManager").innerHTML = null;
+                            document.getElementById("EMPDetails").style.visibility = "hidden";
+                            return swal("This Serial Number is invaild")
+                        }
+                        else {
+                            var html = ''
+                            for (var i = 0; i < json.assetHistorylistBetter.length; i++) {
+                                html += '<tr>'
+                                html += '<td>' + json.assetHistorylistBetter[i].dateUpdate + '</td>'
+                                html += '<td>' + json.assetHistorylistBetter[i].changes + '</td>'
+                                html += '<td>' + json.showStatusName[i].statusName + '</td>'
+                                html += '<td>' + json.assetHistorylistBetter[i].avilabiltyStatus + '</td>'
+                                html += '<td>' + json.assetHistorylistBetter[i].assigendEMP + '</td>'
+                                html += '</tr>'
+                            }
+                            $('#ItemsBody').html(html);
+                            document.getElementById("ItemDescription").innerHTML = json.assetHistorywihtoutEMP.description;
+                            document.getElementById("Brand").innerHTML = json.assetHistorywihtoutEMP.brandName;
+                            document.getElementById("Type").innerHTML = json.assetHistorywihtoutEMP.typeName;
+                            document.getElementById("ItemTOEmployeeCode").innerHTML = null;
+                            document.getElementById("ItemEMPName").innerHTML = null;
+                            document.getElementById("ItemEMPPostion").innerHTML = null;
+                            document.getElementById("ItemEMPDepartment").innerHTML = null;
+                            document.getElementById("ItemEMPDirectManager").innerHTML = null;
+                            document.getElementById("EMPDetails").style.visibility = "hidden";
+                            return swal("This Item Serial is not Assigned To an Employe")
+                        }
+
+                    }
+                    else
+                        {
+                        document.getElementById("ItemDescription").innerHTML = json.assignedItemToEMP.description;
+                        document.getElementById("Brand").innerHTML = json.assignedItemToEMP.brandName;
+                        document.getElementById("Type").innerHTML = json.assignedItemToEMP.typeName;
+                        document.getElementById("ItemTOEmployeeCode").innerHTML = json.assignedItemToEMP.employeID;
+                        document.getElementById("ItemEMPName").innerHTML = json.assignedItemToEMP.englishName;
+                        document.getElementById("ItemEMPPostion").innerHTML = json.assignedItemToEMP.englishPosition;
+                        document.getElementById("ItemEMPDepartment").innerHTML = json.assignedItemToEMP.name;
+                        document.getElementById("ItemEMPDirectManager").innerHTML = json.assignedItemToEMP.directManager;
+                        document.getElementById("EMPDetails").style.visibility = "visible";
+                    }
+                }
+            })
+        }
+        
+
+        //function HistoryOfAsset() {
+        //    var html = ''
+        //    for (var i = 0; i < Data.assetHistoryList.length; i++) {
+        //        html += '<tr>'
+        //        html += '<td>' + Data[i].assetHistoryList.dateUpdate + '</td>'
+        //        html += '<td>' + Data[i].assetHistoryList.statusName + '</td>'
+        //        html += '<td>' + Data[i].assetHistoryList.avilabiltyStatus + '</td>'
+        //        html += '<td>' + Data[i].assetHistoryList.assigendEMP + '</td>'
+        //        html += '</tr>'
+
+        //    }
+        //    $('#ItemsBody').html(html);
+        //}
+
+
+
+    </script>
+</head>
+<body>
+    <div style="margin-top:30px">
+        <div class="col-sm-4">
+            <label>Item Serial Number:</label>
+            <input id="txtitem" />
+            <input type="button" id="txtitem" value="Search" class="btn btn-success" onclick="GetAssignedItemData()" />
+        </div>
+        <div class="form-group" id="ItemInfo">
+            <div class="form-group col-sm-6">
+                <label>Description:</label>
+                <label id="ItemDescription"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Brand:</label>
+                <label id="Brand"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Type:</label>
+                <label id="Type"></label>
+            </div>
+        </div>
+        <div class="form-group" id="EMPDetails" style="visibility:hidden">
+            <div class="form-group col-sm-6">
+                <label> Employee Code:</label>
+                <label id="ItemTOEmployeeCode"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Name:</label>
+                <label id="ItemEMPName"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Postion:</label>
+                <label id="ItemEMPPostion"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Department:</label>
+                <label id="ItemEMPDepartment"></label>
+            </div>
+            <div class="form-group col-sm-6">
+                <label>Direct Manager:</label>
+                <label id="ItemEMPDirectManager"></label>
+            </div>
+        </div>
+    </div>
+    <footer>
+    </footer>
+    <table class="table table-bordered table-hover" style="text-align:center" id="ItemsAssigendTable">
+        <thead class="bg-dark">
+            <tr>
+                <th class="center">Dates</th>
+                <th class="center">Action</th>
+                <th class="center">Status</th>
+                <th class="center">Avilabilty</th>
+                <th class="center">Assigned To </th>
+            </tr>
+        <tbody id="ItemsBody">
+        </tbody>
+    </table>
+</body>
+</html>

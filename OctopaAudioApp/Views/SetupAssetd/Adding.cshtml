@@ -7,7 +7,7 @@
 
 <body>
     <form>
-        <input type="text" id="myInput" onkeyup="Search()" placeholder="Search">
+        <input type="text" class="form-group" id="myInput" onkeyup="Search()" placeholder="Search">
         <table class="table table-bordered table-hover dt-responsive nowrap" id="Table1111" style="text-align:center">
             <thead class="bg-dark">
                 <tr>
@@ -21,6 +21,8 @@
                     <th>GPU</th>
                     <th>RAM</th>
                     <th>Storage</th>
+                    <th>Avilabilty</th>
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody id="ALlItem">
@@ -124,10 +126,70 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="EditStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create New Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group col-sm-6">
+                            <label>Item:</label>
+                            <input type="text" id="txtItemStatus" disabled="disabled" />
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>Status:</label>
+                            <input type="text" id="txtStatus" disabled="disabled" />
+                        </div>
+                        <div class=" form-group col-sm-6">
+                            <label for="EditStatusList">New status:</label>
+                            <select id="EditStatusList" onchange="GetEMPDataForRelocate()">
+                                @foreach (var EMP in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetStatus>)ViewData["statusListData"])
+                                {
+                                    <option value="@EMP.Code">@EMP.StatusName</option>
+                                }
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" class="btn btn-sm btn-success" onclick="EditStatus()" id="COnvertToArray" value="Edit Status" />
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
 <script>
+    function EditStatus() {
+        var item = document.getElementById("txtItemStatus").value;
+        var NewStatus = document.getElementById("EditStatusList").value;
+        $.ajax({
+            type: "POST",
+            url: "/SetupAssetd/EditItemStatus?Item=" + item + "&status=" + NewStatus,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function myfunction(andrew) {
+                GetData()
+                $("#EditStatus").modal('hide');
+            }
+        })
+        console.log(item, ID, NewID);
+    }
+    function ViewStatus(id) {
+        var find = Data[id];
+        var serial = find.serialNUmber;
+        var Status = find.statusName;
+        document.getElementById("txtItemStatus").value = serial;
+        document.getElementById("txtStatus").value = Status;
+
+    }
         function ConvertToArray() {
             var type = $('#Types :selected').text();
             var div = $(this);
@@ -260,17 +322,20 @@
             html += '<td>' + Data[i].gpu + '</td>'
             html += '<td>' + Data[i].ram + '</td>'
             html += '<td>' + Data[i].storage + '</td>'
+            html += '<td>' + Data[i].avilabiltyStatus + '</td>'
+            html += '<td>' + '<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">' + '</input>' + '</td>'
 
             html += '</tr>'
 
         }
+        console.log(html);
         $('#ALlItem').html(html);
     }
     $("#myInput").on("keyup", function () {
 
         var value = $(this).val().toLowerCase();
 
-        $("#Table1111 tr").filter(function () {
+        $("#ALlItem tr").filter(function () {
 
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
 

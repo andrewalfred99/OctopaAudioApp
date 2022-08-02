@@ -24,5 +24,6 @@ namespace OctopaAudioApp.Models.SetupModels
         public string AddedUser { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime DateUpdate { get; set; }
+        public Boolean AvilabiltyStatus { get; set; }
     }
 }

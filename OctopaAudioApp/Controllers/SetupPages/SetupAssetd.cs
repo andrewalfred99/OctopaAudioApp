@@ -18,7 +18,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
     public class SetupAssetd : Controller
     {
         private readonly AudioDbContext _Context;
-        public SetupAssetd (AudioDbContext context)
+        public SetupAssetd(AudioDbContext context)
         {
             _Context = context;
         }
@@ -26,17 +26,36 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             var Data = _Context.Inputs.Join(_Context.AssetBrands, a => a.Brands, b => b.Code, (a, b) => new { a, b })
             .Join(_Context.AssetTypes, c => c.a.Types, d => d.Code, (c, d) => new { c, d }).Join(_Context.AssetStatuses, e => e.c.a.Status, f => f.Code, (e, f) => new { e, f })
-            .Select(A => new { A.e.c.a.SerialNUmber, A.e.c.b.BrandName, A.e.d.TypeName, A.f.StatusName, A.e.c.a.Notes, A.e.c.a.Description, A.e.c.a.Cpu, A.e.c.a.GPU, A.e.c.a.Ram, A.e.c.a.Storage }).ToList();
+            .Select(A => new { A.e.c.a.SerialNUmber, A.e.c.b.BrandName, A.e.d.TypeName, A.f.StatusName, A.e.c.a.Notes, A.e.c.a.Description, A.e.c.a.Cpu, A.e.c.a.GPU, A.e.c.a.Ram, A.e.c.a.Storage, A.e.c.a.AvilabiltyStatus}).ToList();
 
-           
+
             return Json(Data);
         }
         [HttpGet]
         public JsonResult GetEmpData(int EMPCode)
         {
-            var find = _Context.Employees.Join(_Context.Departments, a=> a.Department, b => b.Code, (a,b) => new {a, b}).Select(A => new {A.a.EnglishName, A.a.EnglishPosition, A.a.DirectManager, A.b.Name, A.a.Code}).Where(s => s.Code == EMPCode).FirstOrDefault();
+            var find = _Context.Employees.Join(_Context.Departments, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                .Select(A => new { A.a.EnglishName, A.a.EnglishPosition, A.a.DirectManager, A.b.Name, A.a.Code })
+                .Where(s => s.Code == EMPCode)
+                .FirstOrDefault();
             return Json(find);
         }
+        [HttpGet]
+        public JsonResult Relocate(string serial, int ID, int NEWID)
+        {
+            try
+            {
+                var find = _Context.EmployeAssets.Find(ID, serial);
+
+                return Json(find);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        
+
 
         public JsonResult SaveEMPAndItemData(int Code, [FromBody] ALLDataView aLLDataView)
         {
@@ -45,10 +64,22 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 foreach (var item in aLLDataView.ItemArray)
                 {
                     EmployeAsset NewE = new EmployeAsset();
+                    AssetHistory NEWH = new AssetHistory();
+                    var findinput = _Context.Inputs.Find(item.SerialNUmber);
+
                     NewE.EmployeID = Code;
                     NewE.SerialNUmber = item.SerialNUmber;
                     NewE.AddedUser = User.Identity.Name;
                     NewE.DateUpdate = DateTime.Now;
+                    NEWH.AssigendEMP = Code;
+                    NEWH.AvilabiltyStatus = false;
+                    NEWH.Status = findinput.Status;
+                    findinput.AvilabiltyStatus = false;
+                    NEWH.SerialNUmber = item.SerialNUmber;
+                    NEWH.DateUpdate = DateTime.Now;
+                    NEWH.AddedUser = User.Identity.Name;
+                    NEWH.Changes = "Assigned To Employe";
+                    _Context.AssetHistories.Add(NEWH);
                     _Context.EmployeAssets.Add(NewE);
                     _Context.SaveChanges();
                 }
@@ -139,7 +170,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
         public IActionResult CreateNewStatus()
         {
             var StatusList = _Context.AssetStatuses.ToList();
-            ////ViewData["StatusListData"] = StatusList;
+            ViewData["StatusListData"] = StatusList;
             return View();
         }
        
@@ -182,6 +213,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
             {
                 //var item = NewItem.Data;
                 Inputs NewI = new Inputs();
+                AssetHistory NEWH = new AssetHistory();
                 NewI.SerialNUmber = NewItem.Data.SerialNUmber;
                 NewI.Brands = NewItem.Data.Brands;
                 NewI.Types = NewItem.Data.Types;
@@ -194,7 +226,16 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 NewI.Storage = NewItem.Data.Storage;
                 NewI.AddedUser = User.Identity.Name;
                 NewI.DateUpdate = DateTime.Now;
+                NewI.AvilabiltyStatus = true;
+                NEWH.SerialNUmber = NewItem.Data.SerialNUmber;
+                NEWH.DateUpdate = DateTime.Now;
+                NEWH.AddedUser = User.Identity.Name;
+                NEWH.Status = NewItem.Data.Status;
+                NEWH.AssigendEMP = 0;
+                NEWH.AvilabiltyStatus = true;
+                NEWH.Changes = "Asset Created";
                 _Context.Inputs.Add(NewI);
+                _Context.AssetHistories.Add(NEWH);
                 _Context.SaveChanges();
                 return Json("Accepted");
             }
@@ -347,7 +388,88 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 throw;
             }
         }
+        public JsonResult EditStatusItemEMP(string Item)
+        {
+            var find = _Context.EmployeAssets.Find(Item);
+            if (find == null) {
+                return Json(0);
+            }
+            else {
+                return Json(find.EmployeID);
+            }
+        }
+        public JsonResult EditItemStatus(string Item, int status, int EMPID)
+        {
+            var find = _Context.EmployeAssets.Where(R => R.SerialNUmber == Item && R.EmployeID == EMPID).FirstOrDefault();
+            var findEMPOFITEM = _Context.EmployeAssets.Find(Item);
+            AssetHistory assetHistory = new AssetHistory();
+            var findInput = _Context.Inputs.Find(Item);
+            findInput.Status = status;
+            assetHistory.SerialNUmber = Item;
+            if (find == null && findEMPOFITEM == null)
+            {
+                assetHistory.AssigendEMP = 0;
+            }
+            if (findEMPOFITEM != null) 
+            {
+                assetHistory.AssigendEMP = findEMPOFITEM.EmployeID;
+            }
+            if(find != null)
+            {
+                assetHistory.AssigendEMP = find.EmployeID;
+            }
+            assetHistory.Changes = "Status Changed";
+            assetHistory.DateUpdate = DateTime.Now;
+            assetHistory.Status = status;
+            assetHistory.AddedUser = User.Identity.Name;
+            _Context.AssetHistories.Add(assetHistory);
+            _Context.Inputs.Update(findInput);
+            _Context.SaveChanges();
+            return Json("Done");
+        }
+        public JsonResult Reassign (int OLDEMP, int NEWEMP, string Item)
+        {
+            try
+            {
+                AssetHistory NEWB = new AssetHistory();
+                var find = _Context.EmployeAssets.Where(R=>R.SerialNUmber == Item && R.EmployeID == OLDEMP).FirstOrDefault();
+                var findInput = _Context.Inputs.Find(Item);
+                if (NEWEMP == -1)
+                {
+                    _Context.EmployeAssets.Remove(find);
+                    findInput.AvilabiltyStatus = true;
+                    NEWB.AssigendEMP = NEWEMP;
+                    NEWB.Status = findInput.Status;
+                    NEWB.AvilabiltyStatus = true;
+                    NEWB.SerialNUmber = Item;
+                    NEWB.AddedUser = User.Identity.Name;
+                    NEWB.DateUpdate = DateTime.Now;
+                    NEWB.Changes = "Returned To inventory";
+                }
+                else
+                {
+                    find.EmployeID = NEWEMP;
+                    find.AddedUser = User.Identity.Name;
+                    find.DateUpdate = DateTime.Now;
+                    NEWB.AssigendEMP = NEWEMP;
+                    findInput.AvilabiltyStatus = false;
+                    NEWB.AvilabiltyStatus = false;
+                    NEWB.SerialNUmber = Item;
+                    NEWB.Status = findInput.Status;
+                    NEWB.AddedUser = User.Identity.Name;
+                    NEWB.DateUpdate = DateTime.Now;
+                    NEWB.Changes = "Reassigned to Another Employe";
+                }
 
+                _Context.AssetHistories.Add(NEWB);
+                _Context.SaveChanges();
+                return Json("Done");
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
         public JsonResult EditTypeByCode(int Code, string NewType)
         {
             try
@@ -419,7 +541,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
             var BrandList = _Context.AssetBrands.ToList();
             var TypeList = _Context.AssetTypes.ToList();
             var StatusList = _Context.AssetStatuses.ToList();
-            var inputList = _Context.Inputs.ToList();
+            var inputList = _Context.Inputs.Where(s=>s.AvilabiltyStatus == true).ToList();
             
 
             ViewData["TypeListData"] = TypeList;
@@ -436,15 +558,33 @@ namespace OctopaAudioApp.Controllers.SetupPages
             var EmployeeAsset = _Context.EmployeAssets.ToList();
             var EmployeeList = _Context.Employees.ToList();
             var inputList = _Context.Inputs.ToList();
+            var Statuslist = _Context.AssetStatuses.ToList();
             ViewData["EmployeeListData"] = EmployeeList;
+            ViewData["statusListData"] = Statuslist;
             ViewData["EmployeeAssetListData"] = EmployeeAsset;
             ViewData["InputListData"] = inputList;
             return View();
         }
+        public IActionResult AssetHistory()
+        {
+            var EmployeeAsset = _Context.EmployeAssets.ToList();
+            var EmployeeList = _Context.Employees.ToList();
+            var inputList = _Context.Inputs.ToList();
+            //var AssetHistoryList = _Context.AssetHistories.ToList();
+            ViewData["EmployeeListData"] = EmployeeList;
+            ViewData["EmployeeAssetListData"] = EmployeeAsset;
+            ViewData["InputListData"] = inputList;
+            //ViewData["AssetHistoryListData"] = AssetHistoryList;
+            return View();
+
+        }
         [HttpGet]
         public JsonResult GetSearchedItems(string SerialNUmber)
         {
-            var BrandName = _Context.Inputs.Join(_Context.AssetBrands, a => a.Brands, b => b.Code, (a, b) => new { a, b }).Select(A => new { A.a.SerialNUmber, A.b.BrandName, A.a.Description }).Where(s => s.SerialNUmber == SerialNUmber).FirstOrDefault();
+            var BrandName = _Context.Inputs.Join(_Context.AssetBrands, a => a.Brands, b => b.Code, (a, b) => new { a, b })
+                .Select(A => new { A.a.SerialNUmber, A.b.BrandName, A.a.Description })
+                .Where(s => s.SerialNUmber == SerialNUmber)
+                .FirstOrDefault();
 
             //var findItem = _Context.Inputs.Where(s => s.SerialNUmber == SerialNUmber).FirstOrDefault();
             return Json(BrandName);
@@ -460,26 +600,70 @@ namespace OctopaAudioApp.Controllers.SetupPages
         {
             //var AssignedEMPDeatais = _Context.EmployeAssets.Join(_Context.Employees, a => a.EmployeID, b => b.Code, (a, b) => new { a, b }).Select(A => new { A.a.EmployeID, A.b.EnglishName, A.b.EnglishPosition, A.b.Department, A.b.DirectManager }).Where(s => s.EmployeID == EmployeeCode).FirstOrDefault();
             var AssignedEMPDetails = _Context.Employees.Join(_Context.EmployeAssets, a => a.Code, b => b.EmployeID, (a, b) => new { a, b })
-                .Join(_Context.Departments, c => c.a.Department, d => d.Code, (c,d) => new {c,d})
+                .Join(_Context.Departments, c => c.a.Department, d => d.Code, (c, d) => new { c, d })
                 .Select(A => new { A.c.b.EmployeID, A.c.a.EnglishName, A.c.a.EnglishPosition, A.d.Name, A.c.a.DirectManager, A.c.a.Code })
                 .Where(s => s.Code == EmployeeCode).FirstOrDefault();
+            //var EmpRelocateDetails = _Context.Employees.Select(A =new {A }).Where(s =>s.Code == SerialNUmber)
 
             var AssignedItemDatails = _Context.EmployeAssets
                 .Join(_Context.Inputs, a => a.SerialNUmber, b => b.SerialNUmber, (a, b) => new { a, b })
                 .Join(_Context.AssetBrands, c => c.b.Brands, d => d.Code, (c, d) => new { c, d })
-                .Where(s => s.c.a.EmployeID == EmployeeCode)
-                .Select(A => new { A.c.a.SerialNUmber, A.c.b.Description, A.c.b.Brands, A.d.BrandName }).ToList();
+                .Join(_Context.AssetStatuses, r => r.c.b.Status, t => t.Code, (r, t) => new { r, t })
+                .Where(s => s.r.c.a.EmployeID == EmployeeCode)
+                .Select(A => new { A.r.c.a.SerialNUmber, A.r.c.b.Description, A.r.c.b.Status, A.r.c.b.Brands, A.r.d.BrandName, A.t.StatusName, A.r.c.a.EmployeID }).ToList();
 
             var AssignedItemToEMP = _Context.EmployeAssets
                 .Join(_Context.Inputs, a => a.SerialNUmber, b => b.SerialNUmber, (a, b) => new { a, b })
                 .Join(_Context.Employees, c => c.a.EmployeID, d => d.Code, (c, d) => new { c, d })
                 .Join(_Context.AssetBrands, e => e.c.b.Brands, f => f.Code, (e, f) => new { e, f })
-                .Join(_Context.AssetTypes, j => j.e.c.b.Types, g => g.Code, (j, g) => new {j,g})
-                .Join(_Context.Departments, h => h.j.e.d.Department, i => i.Code, (h, i) => new {h,i} )
-                .Where(s => s.h.j.e.c.a.SerialNUmber == SerialNUmber)
-                .Select(A => new { A.h.j.e.c.a.EmployeID, A.h.j.e.d.EnglishName, A.h.j.e.d.EnglishPosition, A.h.j.e.d.DirectManager, A.h.j.f.BrandName, A.h.j.e.c.b.Description, A.h.g.TypeName, A.i.Name,A.h.j.e.c.a.SerialNUmber }).FirstOrDefault();
+                .Join(_Context.AssetTypes, j => j.e.c.b.Types, g => g.Code, (j, g) => new { j, g })
+                .Join(_Context.Departments, h => h.j.e.d.Department, i => i.Code, (h, i) => new { h, i })
+                .Join(_Context.AssetHistories, l => l.h.j.e.c.b.SerialNUmber, m => m.SerialNUmber, (l, m) => new { l, m })
+                .Join(_Context.AssetStatuses, x => x.l.h.j.e.c.b.Status, z => z.Code, (x, z) => new { x, z })
+                .Where(s => s.x.l.h.j.e.c.a.SerialNUmber == SerialNUmber)
+                .Select(A => new { A.x.l.h.j.e.c.a.EmployeID, A.x.l.h.j.e.d.EnglishName, A.x.l.h.j.e.d.EnglishPosition, A.x.l.h.j.e.d.DirectManager, A.x.l.h.j.f.BrandName, A.x.l.h.j.e.c.b.Description, A.x.l.h.g.TypeName, A.x.l.i.Name, A.x.l.h.j.e.c.a.SerialNUmber, A.x.m.DateUpdate, A.x.m.AssigendEMP, A.x.m.AvilabiltyStatus, A.x.m.Status, A.z.StatusName }).FirstOrDefault();
+
+            var AssetHistoryList = _Context.EmployeAssets
+               .Join(_Context.Inputs, a => a.SerialNUmber, b => b.SerialNUmber, (a, b) => new { a, b })
+               .Join(_Context.Employees, c => c.a.EmployeID, d => d.Code, (c, d) => new { c, d })
+               .Join(_Context.AssetBrands, e => e.c.b.Brands, f => f.Code, (e, f) => new { e, f })
+               .Join(_Context.AssetTypes, j => j.e.c.b.Types, g => g.Code, (j, g) => new { j, g })
+               .Join(_Context.Departments, h => h.j.e.d.Department, i => i.Code, (h, i) => new { h, i })
+               .Join(_Context.AssetHistories, l => l.h.j.e.c.b.SerialNUmber, m => m.SerialNUmber, (l, m) => new { l, m })
+               //.Join(_Context.AssetHistories,x => x.l.h.j.e.c.b.)
+               .Join(_Context.AssetStatuses, o => o.l.h.j.e.c.b.Status, p => p.Code, (o, p) => new { o, p })
+               .Where(s => s.o.l.h.j.e.c.a.SerialNUmber == SerialNUmber)
+               .Select(A => new { A.o.l.h.j.e.c.a.EmployeID, A.o.m.Changes, A.o.l.h.j.e.d.EnglishName, A.o.l.h.j.e.d.EnglishPosition, A.o.l.h.j.e.d.DirectManager, A.o.l.h.j.f.BrandName, A.o.l.h.j.e.c.b.Description, A.o.l.h.g.TypeName, A.o.l.i.Name, A.o.l.h.j.e.c.a.SerialNUmber, A.o.m.DateUpdate, A.o.m.AssigendEMP, A.o.m.AvilabiltyStatus, A.o.m.Status, A.p.StatusName }).ToList();
+           
+            var AssetHistorylistBetter = _Context.Inputs
+                .Join(_Context.AssetBrands, e => e.Brands, f => f.Code, (e, f) => new { e, f })
+                .Join(_Context.AssetStatuses, g => g.e.Status, h => h.Code, (g, h) => new { g, h })
+                .Join(_Context.AssetTypes, r => r.g.e.Types, t => t.Code, (r, t) => new { r, t })
+                .Join(_Context.AssetHistories, i => i.r.g.e.SerialNUmber, o => o.SerialNUmber, (i, o) => new { i, o })
+                .Where(s => s.i.r.g.e.SerialNUmber == SerialNUmber)
+                .Select(A => new { A.o.AssigendEMP, A.o.Status, A.o.SerialNUmber, A.o.Changes, A.o.AvilabiltyStatus, A.o.DateUpdate, A.i.t.TypeName, A.i.r.h.StatusName, A.i.r.h.Code, A.i.r.g.f.BrandName, A.i.r.g.e.Description }).ToList();
+            var showStatusName = _Context.AssetHistories
+                .Join(_Context.AssetStatuses, a => a.Status, w => w.Code, (a, w) => new { a, w })
+                .Where(s => s.a.SerialNUmber == SerialNUmber)
+                .Select(A => new { A.w.StatusName }).ToList(); 
+
+            var showEMPName = _Context.AssetHistories
+                .Join(_Context.Employees, a => a.AssigendEMP, w => w.Code, (a, w) => new { a, w })
+                .Where(s => s.a.SerialNUmber == SerialNUmber)
+                .Select(A => new { A.w.EnglishName, A.a.AssigendEMP }).ToList();
             
-            var AllAssinged = new { AssignedEMPDetails, AssignedItemDatails, AssignedItemToEMP };
+            var AssetHistorywihtoutEMP = _Context.Inputs
+                .Join(_Context.AssetBrands, e => e.Brands, f => f.Code, (e, f) => new { e, f })
+                .Join(_Context.AssetStatuses, g => g.e.Status, h => h.Code, (g, h) => new { g, h })
+                .Join(_Context.AssetTypes, r => r.g.e.Types, t => t.Code, (r, t) => new { r, t })
+                .Join(_Context.AssetHistories, i => i.r.g.e.SerialNUmber, o => o.SerialNUmber, (i, o) => new { i, o })
+                .Where(s => s.i.r.g.e.SerialNUmber == SerialNUmber)
+                .Select(A => new { A.o.AssigendEMP, A.o.Status, A.o.SerialNUmber, A.o.Changes, A.o.AvilabiltyStatus, A.o.DateUpdate, A.i.t.TypeName, A.i.r.h.StatusName, A.i.r.h.Code, A.i.r.g.f.BrandName, A.i.r.g.e.Description}).FirstOrDefault();
+
+            var RelocateEMPData = _Context.Employees
+                .Join(_Context.Departments, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                .Select(A => new { A.a.EnglishName, A.a.Code, A.b.Name, A.a.DirectManager, A.a.EnglishPosition }).Where(s => s.Code == EmployeeCode).FirstOrDefault();
+            var AllAssinged = new { AssignedEMPDetails, AssignedItemDatails, AssignedItemToEMP, AssetHistoryList, RelocateEMPData, AssetHistorylistBetter, AssetHistorywihtoutEMP, showStatusName, showEMPName };
             return Json(AllAssinged);
         }
 

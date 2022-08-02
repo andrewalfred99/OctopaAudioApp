@@ -11,7 +11,6 @@ namespace OctopaAudioApp.Models
     [Table("EmployeAsset")]
     public class EmployeAsset
     {
-        [Key]
         public int EmployeID { get; set; }
         [Key]
        

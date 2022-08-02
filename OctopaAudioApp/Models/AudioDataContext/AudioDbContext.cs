@@ -31,11 +31,10 @@ namespace OctopaAudioApp.Models.AudioDataContext
         public virtual DbSet<ItemView> ItemViews { get; set; }
 
         public virtual DbSet<Department> Departments { get; set; }
+        public virtual DbSet<AssetHistory> AssetHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EmployeAsset>()
-                .HasKey(c => new { c.EmployeID, c.SerialNUmber });
             //modelBuilder.Entity<ass>
         }
     }
