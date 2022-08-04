@@ -438,7 +438,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 {
                     _Context.EmployeAssets.Remove(find);
                     findInput.AvilabiltyStatus = true;
-                    NEWB.AssigendEMP = NEWEMP;
+                    NEWB.AssigendEMP = 0;
                     NEWB.Status = findInput.Status;
                     NEWB.AvilabiltyStatus = true;
                     NEWB.SerialNUmber = Item;
