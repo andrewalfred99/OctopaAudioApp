@@ -10,8 +10,10 @@ namespace OctopaAudioApp.Models.SetupModels
     [Table("AssetHistory")]
     public class AssetHistory
     {
-        public string SerialNUmber { get; set; }
         [Key]
+        public int Code { get; set; }
+        public string SerialNUmber { get; set; }
+        
         [DataType(DataType.DateTime)]
         public DateTime DateUpdate { get; set; }
         public Boolean AvilabiltyStatus { get; set; }

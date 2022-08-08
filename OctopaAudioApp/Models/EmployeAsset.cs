@@ -20,5 +20,6 @@ namespace OctopaAudioApp.Models
         public string AddedUser { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime DateUpdate { get; set; }
+
     }
 }

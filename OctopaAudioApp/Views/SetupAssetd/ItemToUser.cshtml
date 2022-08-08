@@ -38,7 +38,7 @@
                 contentType: 'application/json; charset=utf-8',
                 datatype: 'json',
                 success: function (result) {
-                    UserSearch2 = 0
+                    UserSearch2 = -1
                     document.getElementById("Code").innerHTML = null;
                     document.getElementById("Name").innerHTML = null;
                     document.getElementById("Postion").innerHTML = null;
@@ -108,20 +108,19 @@
         function GetitemData() {
             var UserSearch3 = $("#myBrowser").val();
             console.log(UserSearch3);
-            $.ajax({
-                type: "GET",
-                url: "/SetupAssetd/GetSearchedItems?SerialNUmber=" + UserSearch3,
-                contentType: "application/json;charset=utf-8",
-                datatype: 'json',
-                success: function (json) {
-                    console.log(json)
+                $.ajax({
+                    type: "GET",
+                    url: "/SetupAssetd/GetSearchedItems?SerialNUmber=" + UserSearch3,
+                    contentType: "application/json;charset=utf-8",
+                    datatype: 'json',
+                    success: function (json) {
+                        console.log(json)
 
-                    document.getElementById("Brand").value = json.brandName;
-                    document.getElementById("Discreption").value = json.description;
+                        document.getElementById("Brand").value = json.brandName;
+                        document.getElementById("Discreption").value = json.description;
 
-                }
-            })
-
+                    }
+                })
         }
         function AddNewRowTwo() {
             var SerialNo = $("#myBrowser").val();
@@ -341,11 +340,11 @@
                 </tbody>
                 <tfoot id="id=" ItemsBody2"">
                     <tr>
-                        <td><input list="browsers" id="myBrowser" onchange="GetitemData()" class="form-control" /></td>
+                        <td>@*<input id="myBrowser"/> <input type="button" id="myBrowser" value="Search" class="btn btn-success" onclick="GetitemData()"/>*@<input list="browsers" id="myBrowser" onchange="GetitemData()" class="form-control" /></td>
 
-                        <td><input type="Text" id="Brand" class="form-control" /></td>
+                        <td><input type="Text" id="Brand" class="form-control" disabled="disabled"/></td>
 
-                        <td><input type="text" id="Discreption" class="form-control" /></td>
+                        <td><input type="text" id="Discreption" class="form-control" disabled="disabled"/></td>
 
                         <td><input type="button" id="AddButtonToRow" class="btn btn-sm btn-success" onclick="AddNewRowTwo()" value="Add" /></td>
                     </tr>
@@ -378,7 +377,7 @@
             @foreach (var InputList in (IEnumerable<OctopaAudioApp.Models.SetupModels.Inputs>)ViewData["InputListData"])
             {
 
-                <option value="@InputList.SerialNUmber">@InputList.SerialNUmber</option>
+            <option value="@InputList.SerialNUmber">@InputList.SerialNUmber</option>
             }
         </datalist>
     </div>

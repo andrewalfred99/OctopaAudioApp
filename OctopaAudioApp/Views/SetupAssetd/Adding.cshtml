@@ -3,6 +3,9 @@
 <head>
     <title>Adding An Item</title>
     <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
 </head>
 
 <body>
@@ -164,7 +167,6 @@
         </div>
     </div>
 </body>
-
 </html>
 <script>
     function EditStatus() {
@@ -301,35 +303,34 @@
             data: "{}",
             dataType:"json",
             success: function (json) {
-                Data = json;
-                Draw();;
+                console.log(json)
+                var html = ''
+                for (var i = 0; i < json.length; i++) {
+                    html += '<tr>'
+                    html += '<td>' + json[i].serialNUmber + '</td>'
+                    html += '<td>' + json[i].typeName + '</td>'
+                    html += '<td>' + json[i].brandName + '</td>'
+                    html += '<td>' + json[i].statusName + '</td>'
+                    html += '<td>' + json[i].description + '</td>'
+                    html += '<td>' + json[i].notes + '</td>'
+                    html += '<td>' + json[i].cpu + '</td>'
+                    html += '<td>' + json[i].gpu + '</td>'
+                    html += '<td>' + json[i].ram + '</td>'
+                    html += '<td>' + json[i].storage + '</td>'
+                    html += '<td>' + json[i].avilabiltyStatus + '</td>'
+                    html += '<td>' + '<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">' + '</input>' + '</td>'
 
+                    html += '</tr>'
+
+                }
+                console.log(html);
+                $('#ALlItem').html(html);
 
             }
         });
     }
     function Draw() {
-        var html = ''
-        for (var i = 0; i < Data.length; i++) {
-            html += '<tr>'
-            html += '<td>' + Data[i].serialNUmber + '</td>'
-            html += '<td>' + Data[i].typeName + '</td>'
-            html += '<td>' + Data[i].brandName + '</td>'
-            html += '<td>' + Data[i].statusName + '</td>'
-            html += '<td>' + Data[i].description + '</td>'
-            html += '<td>' + Data[i].notes + '</td>'
-            html += '<td>' + Data[i].cpu + '</td>'
-            html += '<td>' + Data[i].gpu + '</td>'
-            html += '<td>' + Data[i].ram + '</td>'
-            html += '<td>' + Data[i].storage + '</td>'
-            html += '<td>' + Data[i].avilabiltyStatus + '</td>'
-            html += '<td>' + '<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">' + '</input>' + '</td>'
-
-            html += '</tr>'
-
-        }
-        console.log(html);
-        $('#ALlItem').html(html);
+        
     }
     $("#myInput").on("keyup", function () {
 
