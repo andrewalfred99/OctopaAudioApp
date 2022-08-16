@@ -1,0 +1,339 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function EditStatus() {
+            console.log("daxsdqwd")
+            var item = document.getElementById("txtItemStatus").value;
+            var NewStatus = document.getElementById("EditStatusList").value;
+            $.ajax({
+                type: "POST",
+                url: "/SetupAssetd/EditItemStatus?Item=" + item + "&status=" + NewStatus,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function myfunction(andrew) {
+                    swal({
+                        title: "Succes",
+                        text: "This Assit's Status has changed",
+                        type: "success"
+                    });
+                    GetData();
+                    $("#EditStatus").modal('hide');
+                }
+            })
+            console.log(item, ID, NewID);
+        }
+        function ViewStatus(id) {
+            var find = Data[id];
+            var serial = find.serialNUmber;
+            var Status = find.statusName;
+            document.getElementById("txtItemStatus").value = serial;
+            document.getElementById("txtStatus").value = Status;
+
+        }
+        function ConvertToArray() {
+            var type = $('#Types :selected').text();
+            var div = $(this);
+            var Data = {};
+            Data.SerialNUmber = document.getElementById("SerialNumberInput").value;
+            Data.Brands = document.getElementById("Brands").value;
+            Data.Types = document.getElementById("Types").value;
+            Data.Cpu = document.getElementById("CPU").value;
+            Data.GPU = document.getElementById("GPU").value;
+            Data.Ram = document.getElementById("Ram").value;
+            Data.Storage = document.getElementById("Storage").value;
+            Data.Status = document.getElementById("Status").value;
+            Data.Description = document.getElementById("Description").value;
+            Data.Notes = document.getElementById("Notes").value;
+            if (Data.Brands == "-1" || Data.Status == "-1" || Data.Types == "-1" || Data.SerialNUmber == null || Data.Description == null) {
+                return swal({
+                    title: "Failed",
+                    text: "Sorry Some of the inputs Are Empty, please fill all Inputs",
+                    type: "error"
+                });
+            }
+            else if (type == "Laptop") {
+                if (Data.Cpu == "" || Data.GPU == "" || Data.Ram == "" || Data.Storage == "") {
+                    alert("sorry Some of the laptop information Are Empty, please fill all the Laptop Info")
+                }
+                else {
+
+                    console.log(Data);
+                    var DataToSend = { Data }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/SetupAssetd/SaveInputData',
+                        data: JSON.stringify(DataToSend),
+                        contentType: 'application/json; charset=utf-8',
+                        datatype: 'json',
+                        success: function (result) {
+                            swal({
+                                title: "Succes",
+                                text: "A New Asset Has Been Created",
+                                type: "success"
+                            });
+                            $("#CreateNewItem").modal('hide');
+                            GetData();
+
+
+                        },
+                        error: function (result) {
+                            swal({
+                                title: "Failed",
+                                text: "Somthing Went Wrong",
+                                type: "error"
+                            });
+                        }
+                    });
+                    document.getElementById("SerialNumberInput").value = ""
+                    document.getElementById("Brands").value = "-1"
+                    document.getElementById("Types").value = "-1"
+                    document.getElementById("Status").value = "-1"
+                    document.getElementById("Description").value = ""
+                    document.getElementById("Notes").value = ""
+                    document.getElementById("CPU").value = ""
+                    document.getElementById("GPU").value = ""
+                    document.getElementById("Ram").value = ""
+                    document.getElementById("Storage").value = ""
+                }
+            }
+            else {
+                console.log(Data);
+                var DataToSend = { Data }
+                $.ajax({
+                    type: 'POST',
+                    url: '/SetupAssetd/SaveInputData',
+                    data: JSON.stringify(DataToSend),
+                    contentType: 'application/json; charset=utf-8',
+                    datatype: 'json',
+                    success: function (result) {
+                        swal({
+                            title: "Succes",
+                            text: "A New Asset Has Been Created",
+                            type: "success"
+                        });
+                        $("#CreateNewItem").modal('hide');
+                        GetData();
+                    },
+                    error: function (result) {
+                        swal({
+                            title: "Failed",
+                            text: "Somthing Went Wrong",
+                            type: "error"
+                        });
+                    }
+                });
+                document.getElementById("SerialNumberInput").value = ""
+                document.getElementById("Brands").value = "-1"
+                document.getElementById("Types").value = "-1"
+                document.getElementById("Status").value = "-1"
+                document.getElementById("Description").value = ""
+                document.getElementById("Notes").value = ""
+                document.getElementById("CPU").value = ""
+                document.getElementById("GPU").value = ""
+                document.getElementById("Ram").value = ""
+                document.getElementById("Storage").value = ""
+            }
+
+        }
+        $(document).ready(function () {
+            $('.js-example-basic-multiple').select2();
+            GetData();
+            $("#Types").change(function () {
+                var type = $('#Types :selected').text();
+                console.log(type);
+                if (type == "Laptop") {
+                    document.getElementById("ShowToLaptop").style.visibility = "visible";
+
+
+                }
+                else {
+                    document.getElementById("ShowToLaptop").style.visibility = "hidden";
+
+                }
+            });
+        });
+        function GetData() {
+            $.ajax({
+                type: "GET",
+                url: "/SetupAssetd/GetAllDataitem",
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    Draw();;
+                }
+            });
+        }
+        function Draw() {
+            var html = ''
+            for (var i = 0; i < Data.length; i++) {
+                html += '<tr>'
+                html += '<td>' + Data[i].serialNUmber + '</td>'
+                html += '<td>' + Data[i].typeName + '</td>'
+                html += '<td>' + Data[i].brandName + '</td>'
+                html += '<td>' + Data[i].statusName + '</td>'
+                html += '<td>' + Data[i].description + '</td>'
+                html += '<td>' + Data[i].notes + '</td>'
+                html += '<td>' + Data[i].cpu + '</td>'
+                html += '<td>' + Data[i].gpu + '</td>'
+                html += '<td>' + Data[i].ram + '</td>'
+                html += '<td>' + Data[i].storage + '</td>'
+                html += '<td>' + Data[i].avilabiltyStatus + '</td>'
+                html += '<td>' + '<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">' + '</input>' + '</td>'
+
+                html += '</tr>'
+
+            }
+            console.log(html);
+            $('#ALlItem').html(html);
+        }
+    </script>
+    <title>Adding An Item</title>
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+    @*<script src="~/assets/javascripts/tables/examples.datatables.tabletools.js"></script>*@
+</head>
+<body>
+    <table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
+        <thead class="bg-dark">
+            <tr>
+                <th>Serial Number</th>
+                <th>Type</th>
+                <th>Brand</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Notes</th>
+                <th>CPU</th>
+                <th>GPU</th>
+                <th>RAM</th>
+                <th>Storage</th>
+                <th>Avilabilty</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody id="ALlItem">
+        </tbody>
+    </table>
+        <input type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#CreateNewItem" id="COnvertToArray" value="Create New Item" />
+    <div class="modal fade" id="CreateNewItem" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create New Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="SerialNumber">Serial Number:</label>
+                            <input type="text" class="form-control" id="SerialNumberInput" />
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="Brands">Brands:</label>
+                            <select class="js-example-basic-multiple" id="Brands">
+                                <option value="-1">--Select Brand--</option>
+                                @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetBrand>)ViewData["BrandListData"])
+                                {
+                                    <option value="@item.Code">@item.BrandName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label for="Types">Types:</label>
+                            <select class="js-example-basic-multiple" id="Types">
+                                <option value="-1">--Select Type--</option>
+                                @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetType>)ViewData["TypeListData"])
+                                {
+
+                                    <option id="TypeOptions" value="@item.Code">@item.TypeName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label for="Status">Status:</label>
+                            <select class="js-example-basic-multiple" id="Status">
+                                <option value="-1">--Select Status--</option>
+                                @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetStatus>)ViewData["StatusListData"])
+                                {
+                                    <option value="@item.Code">@item.StatusName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="Description">Description:</label>
+                            <textarea class="form-control" id="Description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="Notes">Notes:</label>
+                            <textarea class="form-control" id="Notes" rows="3"></textarea>
+                        </div>
+                        <div class="form-group" id="ShowToLaptop" style="visibility:hidden">
+                            <div class="form-group col-sm-6">
+                                <label>CPU:</label>
+                                <input type="text" class="form-control" id="CPU" />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>GPU:</label>
+                                <input type="text" class="form-control" id="GPU" />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Ram:</label>
+                                <input type="text" class="form-control" id="Ram" />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Storage:</label>
+                                <input type="text" class="form-control" id="Storage" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" class="btn btn-sm btn-success" onclick="ConvertToArray()" id="COnvertToArray" value="Create New Item" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="EditStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create New Asset</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <label class="col-md-3">Item:</label>
+                            <input class="col-md-auto" type="text" id="txtItemStatus" disabled="disabled" />
+                        </div>
+                        <div class="row">
+                            <label class="col-md-3">Status:</label>
+                            <input class="col-md-3" type="text" id="txtStatus" disabled="disabled" />
+                        </div>
+                        <div class="row">
+                            <label class="col-md-3" for="EditStatusList">New status:</label>
+                            <select class="col-md-auto js-example-basic-multiple" id="EditStatusList" onchange="GetEMPDataForRelocate()">
+                                @foreach (var EMP in (IEnumerable<OctopaAudioApp.Models.SetupModels.AssetStatus>)ViewData["statusListData"])
+                                {
+                                    <option value="@EMP.Code">@EMP.StatusName</option>
+                                }
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" class="btn btn-sm btn-success" onclick="EditStatus()" id="COnvertToArray" value="Edit Status" />
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

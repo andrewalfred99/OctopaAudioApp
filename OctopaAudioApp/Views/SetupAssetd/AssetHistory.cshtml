@@ -16,6 +16,10 @@
     <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
     <script>
         var Details = [];
+        function GetAssignedItemData2() {
+            var UserSearch3 = $("#txtitem").val();
+            console.log(UserSearch3);
+        }
         function GetAssignedItemData() {
             var UserSearch3 = $("#txtitem").val();
             console.log(UserSearch3);
@@ -26,7 +30,7 @@
                 datatype: 'json',
                 success: function (json) {
                     console.log(json)
-                    //Data = json;
+                    Data = json;
                     ////Details = json.assetHistoryList;
                     var html = ''
                     for (var i = 0; i < json.assetHistoryList.length; i++) {
@@ -40,6 +44,7 @@
                     }
                     $('#ItemsBody').html(html);
                     /*                    HistoryOfAsset();;*/
+
                     if (UserSearch3 == "Select Item") {
                         alert("Please Selcet an Item To Search");
 
@@ -55,7 +60,11 @@
                             document.getElementById("ItemEMPDepartment").innerHTML = null;
                             document.getElementById("ItemEMPDirectManager").innerHTML = null;
                             document.getElementById("EMPDetails").style.visibility = "hidden";
-                            return swal("This Serial Number is invaild")
+                            return swal({
+                                title: "Failed",
+                                text: "This Serial Number is invaild",
+                                type: "error"
+                            });
                         }
                         else {
                             var html = ''
@@ -78,12 +87,15 @@
                             document.getElementById("ItemEMPDepartment").innerHTML = null;
                             document.getElementById("ItemEMPDirectManager").innerHTML = null;
                             document.getElementById("EMPDetails").style.visibility = "hidden";
-                            return swal("This Item Serial is not Assigned To an Employe")
+                            return swal({
+                                title: "Not Assigned",
+                                text: "This Asset is not Assigned To an Employee",
+                                type: "warning"
+                            });
                         }
 
                     }
-                    else
-                        {
+                    else {
                         document.getElementById("ItemDescription").innerHTML = json.assignedItemToEMP.description;
                         document.getElementById("Brand").innerHTML = json.assignedItemToEMP.brandName;
                         document.getElementById("Type").innerHTML = json.assignedItemToEMP.typeName;
@@ -97,7 +109,6 @@
                 }
             })
         }
-        
 
         //function HistoryOfAsset() {
         //    var html = ''
@@ -163,7 +174,7 @@
     </div>
     <footer>
     </footer>
-    <table class="table table-bordered table-hover" style="text-align:center" id="ItemsAssigendTable">
+    <table class="table table-bordered table-hover " style="text-align:center">
         <thead class="bg-dark">
             <tr>
                 <th class="center">Dates</th>

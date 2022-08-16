@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Assets Brand</title>
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
     <script>
         const { url } = require("node:inspector");
 
@@ -9,7 +10,7 @@
             var BrandName = document.getElementById("txtBName").value;
             var Brand = $("#txtBName").val();
             if (BrandName == "") {
-                alert("sorry, you missed to enter brand's name");
+                swal("sorry, you missed to enter brand's name");
                 return;
             }
             else {
@@ -20,7 +21,15 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function myfunction(andrew) {
-                        alert(andrew);
+                        swal({
+                            title: "Succes",
+                            text: "A New Brand Has Been Saved",
+                            type: "success"
+                        }, function () {
+                            window.location.reload();
+                            location.reload();
+                        });
+
                         document.getElementById("txtBName").value = ""
                         $("#BrandNameCreateModalCenter").modal('hide');
 
@@ -41,7 +50,16 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function myfunction(andrew) {
-                    alert(andrew);
+                    swal({
+                        title: "Succes",
+                        text: "The Selected Brand Has Been Edited",
+                        type: "success"
+                    }, function () {
+                        window.location.reload();
+                        location.reload();
+                    });
+                    $("#BrandNameEditModalCenter").modal('hide');
+                    document.getElementById("EditBName").value = "";
                 }
             })
         }
@@ -54,9 +72,10 @@
                 dataType: "json",
                 success: function (json) {
                     document.getElementById("txtCode").innerHTML = Code;
-                    document.getElementById("txtName").value = json;
+                    document.getElementById("txtName").innerHTML = json;
                     $("#BrandNameEditModalCenter").modal('show');
                     $("#TABLE").ajax.reload;
+                    $('#TABLE').data.reload();
 
                 }
             });
@@ -102,17 +121,15 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <label class="col-md-3">Code</label>
+                    <label class="col-md-3">Code:</label>
                     <label class="col-md-3" id="txtCode"></label>
                 </div>
                 <div class="row">
-                    <label class="col-md-3">Old Name</label>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" id="txtName" disabled="disabled" />
-                    </div>
+                    <label class="col-md-3">Old Name:</label>
+                    <label class="col-md-3" id="txtName"></label>
                 </div>
                 <div class="row">
-                    <label class="col-md-3">New Name</label>
+                    <label class="col-md-3">New Name:</label>
                     <div class="col-md-3">
                         <input class="form-control" id="EditBName" />
                     </div>
@@ -129,12 +146,12 @@
     </div>
     </div>
 
-    <table class="table table-bordered table-hover" id="TABLE" style="text-align:center">
+    <table class="table table-bordered table-hover"id="datatable-tabletools" style="text-align:center">
         <thead class="bg-dark">
             <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th></th>
+                <th class="center">Code</th>
+                <th class="center">Name</th>
+                <th class="center">Options</th>
             </tr>
         </thead>
         <tbody>

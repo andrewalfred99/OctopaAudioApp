@@ -86,7 +86,6 @@ namespace OctopaAudioApp.Controllers.SetupPages
                     NEWH.AssigendEMP = Code;
                     NEWH.AvilabiltyStatus = false;
                     NEWH.Status = findinput.Status;
-
                     NEWH.SerialNUmber = item.SerialNUmber;
                     NEWH.DateUpdate = DateTime.Now;
                     NEWH.AddedUser = User.Identity.Name;
@@ -105,22 +104,8 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
             
         }
-
-        public IActionResult Adding()
+        public IActionResult Assets()
         {
-           
-            //var Switch = _Context.AssetBrands
-            //    .Join(
-            //    _Context.Inputs,
-            //   BrandSetup => AssetBrand,
-            //   BrandsItems => Inputs,
-            //   (BrandSetup, BrandsItems) => new
-            //   {
-            //       BrandID = BrandsItems.Brands,
-            //       BrandName = BrandSetup.BrandName,
-            //   }
-            //    ).Tolist();
-          
             var BrandList = _Context.AssetBrands.ToList();
             var TypeList = _Context.AssetTypes.ToList();
             var StatusList = _Context.AssetStatuses.ToList();
@@ -242,7 +227,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 NEWH.SerialNUmber = NewItem.Data.SerialNUmber;
                 NEWH.DateUpdate = DateTime.Now;
                 NEWH.AddedUser = User.Identity.Name;
-                NEWH.Code = _Context.AssetHistories.Select(c => c.Code).DefaultIfEmpty().Max() + 1;
+                NEWH    .Code = _Context.AssetHistories.Select(c => c.Code).DefaultIfEmpty().Max() + 1;
                 NEWH.Status = NewItem.Data.Status;
                 NEWH.AssigendEMP = 0;
                 NEWH.AvilabiltyStatus = true;
@@ -598,8 +583,8 @@ namespace OctopaAudioApp.Controllers.SetupPages
         public JsonResult GetSearchedItems(string SerialNUmber)
         {
             var BrandName = _Context.Inputs.Join(_Context.AssetBrands, a => a.Brands, b => b.Code, (a, b) => new { a, b })
-                .Select(A => new { A.a.SerialNUmber, A.b.BrandName, A.a.Description })
-                .Where(s => s.SerialNUmber == SerialNUmber)
+                .Select(A => new { A.a.SerialNUmber, A.b.BrandName, A.a.Description, A.a.AvilabiltyStatus})
+                .Where(s => s.SerialNUmber == SerialNUmber && s.AvilabiltyStatus == true)
                 .FirstOrDefault();
 
             //var findItem = _Context.Inputs.Where(s => s.SerialNUmber == SerialNUmber).FirstOrDefault();

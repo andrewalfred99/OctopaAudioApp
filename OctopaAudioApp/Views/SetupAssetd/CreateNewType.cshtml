@@ -2,6 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Assets Type</title>
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+
     <script>
         const { url } = require("node:inspector");
 
@@ -20,7 +22,23 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function myfunction(andrew) {
-                        alert(andrew);
+                        swal({
+                            title: "Succes",
+                            text: "A New Type Has Been Saved",
+                            type: "success"
+                        }, function () {
+                            window.location.reload();
+                            location.reload();
+                        });
+                        document.getElementById("txtBName").value = ""
+                        $("#TypeNameCreateModalCenter").modal('hide');
+                    },
+                    error: function (result) {
+                        swal({
+                            title: "Falied",
+                            text: "Somthing Went Wrong",
+                            type: "Error"
+                        });
                     }
                 });
             }
@@ -29,7 +47,7 @@
 
     <script>
         function EditType() {
-            var Code = document.getElementById("txtCode").value;
+            var Code = document.getElementById("txtCode").innerHTML;
             var NewType = document.getElementById("EditBName").value;
 
             $.ajax({
@@ -38,7 +56,26 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function myfunction(andrew) {
-                    alert(andrew);
+                    swal({
+                        title: "Succes",
+                        text: "The Selected Type has been Edited",
+                        type: "success"
+                    }, function () {
+                        window.location.reload();
+                        location.reload();
+                    });
+                    $("#TypeNameEditModalCenter").modal('hide');
+                    document.getElementById("EditBName").value = "";
+                },
+                error: function (result) {
+                    swal({
+                        title: "Failed",
+                        text: "Somthing Went Wrong",
+                        type: "Fail"
+                    }, function () {
+                        window.location.reload();
+                        location.reload();
+                    });
                 }
             })
         }
@@ -50,8 +87,8 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (json) {
-                    document.getElementById("txtCode").value = Code;
-                    document.getElementById("txtName").value = json;
+                    document.getElementById("txtCode").innerHTML = Code;
+                    document.getElementById("txtName").innerHTML = json;
                     $("#TypeNameEditModalCenter").modal('show');
 
                 }
@@ -97,10 +134,20 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" id="txtName" disabled="disabled" />
-                    <input type="text" id="txtCode" disabled="disabled" />
-
-                    <input class="form-control" id="EditBName" />
+                    <div class="row">
+                        <label class="col-md-3">Code:</label>
+                        <label class="col-md-3" id="txtCode"></label>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-3">Old Name:</label>
+                        <label class="col-md-3" id="txtName"></label>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-3">New Name:</label>
+                        <div class="col-md-3">
+                            <input class="form-control" id="EditBName" />
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -110,12 +157,12 @@
         </div>
     </div>
 
-    <table class="table table-bordered table-hover" style="text-align:center">
+    <table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
         <thead class="bg-dark">
             <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th></th>
+                <th class="center">Code</th>
+                <th class="center">Name</th>
+                <th class="center">Options</th>
             </tr>
         </thead>
         <tbody>
