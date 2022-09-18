@@ -17,7 +17,7 @@ namespace OctopaAudioApp.Models
 
         public string AddUser { get; set; }
 
-        public DateTime DateUpdate { get; set; }
+        public DateTime? DateUpdate { get; set; }
 
         public string REF { get; set; }
     }

@@ -1,0 +1,151 @@
+﻿@using Microsoft.AspNetCore.Identity
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        const { url } = require("node:inspector");
+
+        function SaveNewDEPTicket() {
+            var Department = document.getElementById("Department").value;
+            var Manager = $("#Manager").val();
+            if (Department == "-1") {
+                swal("sorry,please select the Department");
+                return;
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/SetupTickets/SaveDEPFilter?Department=" + Department + "&Manager=" + Manager,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function myfunction(andrew) {
+                        swal({
+                            title: "Succes",
+                            text: "A New Department for ticketing has been saved.",
+                            type: "success"
+                        }, function () {
+                            window.location.reload();
+                            location.reload();
+                        });
+
+                        document.getElementById("Department").value = "-1"
+                        document.getElementById("Manager").value = "-1"
+                        $("#DEPFilterCreateModalCenter").modal('hide');
+
+                    }
+                });
+            }
+        }
+        function GETDEPData() {
+            $.ajax({
+                type: "GET",
+                url: "/SetupTickets/getManagerAndDepartmentName",
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    console.log(Data);
+                    Draw();;
+                    DrawDataTable();;
+                }
+            });
+        }
+        function Draw() {
+            var html = ''
+            for (var i = 0; i < Data.length; i++) {
+                html += '<tr>'
+                html += '<td>' + Data[i].code + '</td>'
+                html += '<td>' + Data[i].department + '</td>'
+                html += '<td>' + Data[i].userManage + '</td>'
+                html += '<td>' + Data[i].allowTickting + '</td>'
+                html += '<td>' + '<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">' + '</input>' + '</td>'
+
+                html += '</tr>'
+            }
+            console.log(html);
+            $('#DEPFilterBody').html(html);
+        }
+    </script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-4 col-sm-2">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterCreateModalCenter">Create a new</button>
+        </div>
+    </div>
+    <div class="modal fade" id="DEPFilterCreateModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create A New Brand </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <dev class ="row">
+                            <div class="col-sm-4">
+                                <label for="Department">Departments:</label>
+                                <select class="js-example-basic-multiple" id="Department">
+                                    <option value="-1">--Select A Department--</option>
+                                    @foreach (var department in (IEnumerable<OctopaAudioApp.Models.Department>)ViewData["DepartmentsList"])
+                                    {
+                                        <option value="@department.Code">@department.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </dev>
+                        <dev class="row">
+                            <div class="col-sm-4">
+                                <label for="Manager">Manager:</label>
+                                <select class="js-example-basic-multiple" id="Manager">
+                                    <option value="-1">--Select A Manager--</option>
+                                    @foreach (var User in (IEnumerable<IdentityUser>)ViewData["UsersList"])
+                                    {
+                                        <option value="@User.Id">@User.UserName</option>
+                                    }
+                                </select>
+                            </div>
+                        </dev>
+                        <div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewDEPTicket()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
+        <thead class="bg-dark">
+            <tr>
+                <th class="center">Code</th>
+                <th class="center">Department</th>
+                <th class="center">Manager</th>
+                <th class="center">Visible</th>
+                <th class="center">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var DEPFilter in (IEnumerable<OctopaAudioApp.Models.SetupModels.AllowDEPToTicket>)ViewData["DepList"])
+            {
+                <tr>
+                    <td id="lblCode">@DEPFilter.Code</td>
+                    <td id="lblName">@DEPFilter.Department</td>
+                    <td id="lblName">@DEPFilter.UserManage</td>
+                    <td id="lblName">@DEPFilter.AllowTickting</td>
+                    <td><button type="button" class="btn btn-primary" onclick="Openedit(@DEPFilter.Code)">Edit</button></td>
+                </tr>
+            }
+        </tbody>
+        <tbody id="DEPFilterBody">
+        </tbody>
+    </table>
+</body>
+</html>

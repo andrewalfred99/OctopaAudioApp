@@ -2,7 +2,61 @@
     ViewData["Title"] = "Home Page";
 }
 
+<dev>
+    <div class="row">
+        <div class="col-md-4 col-sm-2">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterCreateModalCenter">Create a Ticket</button>
+        </div>
+    </div>
+</dev>
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+@*<div class="modal fade" id="CreateTicketModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Create A New Brand </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <dev class="row">
+                        <div class="col-sm-4">
+                            <label for="Department">Departments:</label>
+                            <select class="js-example-basic-multiple" id="Department">
+                                <option value="-1">--Select A Department--</option>
+                                @foreach (var department in (IEnumerable<OctopaAudioApp.Models.SetupModels.AllowDEPToTicket)ViewData["DepartmentsList"])
+                                {
+                                    <option value="@department.Code">@department.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </dev>
+                    <dev class="row">
+                        <div class="col-sm-4">
+                            <label for="Manager">Manager:</label>
+                            <select class="js-example-basic-multiple" id="Manager">
+                                <option value="-1">--Select A Manager--</option>
+                                @foreach (var User in (IEnumerable<IdentityUser>)ViewData["UsersList"])
+                                {
+                                    <option value="@User.Id">@User.UserName</option>
+                                }
+                            </select>
+                        </div>
+                    </dev>
+                    <div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewDEPTicket()" />
+            </div>
+        </div>
+    </div>
+</div>*@

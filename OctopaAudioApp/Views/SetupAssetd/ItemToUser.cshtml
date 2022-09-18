@@ -25,8 +25,12 @@
         function ConvertItemToArray2() {
             var ItemArray = new Array();
             var UserSearch2 = $("#EmployeDatalist2").val();
+            var AssetTable = $("#ItemsBody").val();
             if (UserSearch2 == -1) {
                 return swal("you can't save an item to nothing please choose an Employee.")
+            }
+            if (AssetTable == null) {
+                return swal("you can't save an Employee to nothing please Add An Asset.")
             }
             $('#ItemsTable tbody tr').each(function () {
                 var row = $(this);
