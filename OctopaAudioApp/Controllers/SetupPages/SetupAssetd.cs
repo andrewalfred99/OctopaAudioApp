@@ -227,7 +227,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
                 NEWH.SerialNUmber = NewItem.Data.SerialNUmber;
                 NEWH.DateUpdate = DateTime.Now;
                 NEWH.AddedUser = User.Identity.Name;
-                NEWH    .Code = _Context.AssetHistories.Select(c => c.Code).DefaultIfEmpty().Max() + 1;
+                NEWH.Code = _Context.AssetHistories.Select(c => c.Code).DefaultIfEmpty().Max() + 1;
                 NEWH.Status = NewItem.Data.Status;
                 NEWH.AssigendEMP = 0;
                 NEWH.AvilabiltyStatus = true;

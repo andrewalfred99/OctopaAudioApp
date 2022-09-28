@@ -35,7 +35,8 @@ namespace OctopaAudioApp.Models.AudioDataContext
         public virtual DbSet<AssignedTicketToEMP> AssignedTicketToEMPs { get; set; }
         public virtual DbSet<AllowDEPToTicket> AllowDEPToTickets { get; set; }
         public virtual DbSet<CommenIssues> CommenIssues { get; set; }
-        //public virtual DbSet<Tickets> Tickets { get; set; }
+        public virtual DbSet<Tickets> Tickets { get; set; }
+        public virtual DbSet<TicketsStatus> TicketsStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

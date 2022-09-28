@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<script>
+    
+    function GETTheManager() {
+        var Departemnt = $("#Department").val();
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/GETNAMEs?DEPFilter=" + Departemnt,
+                contentType: "application/json;charset=utf-8",
+                datatype: 'json',
+                success: function (json) {
+                    Manager = json;
+                    console.log(json);
+                    $("#lblManger").html(json.userManage);
+                }
+            })
+    }
+    function SaveNewTicket() {
+        var DEP = document.getElementById("Department").value;
+        var CommenIssue = document.getElementById("CommenIssue").value;
+        var Manager = document.getElementById("lblManger").innerHTML;
+        var Discreption = document.getElementById("DescriptionTXT").value;
+        $.ajax({
+            type: "POST",
+            url: "/SetupTickets/SaveTickets?DEP=" + DEP + "&Issue=" + CommenIssue + "&Description=" + Discreption + "&Manager=" + Manager,
+            contentType: "application/json;charset=utf-8",
+            datatype: 'json',
+            success: function () {
+                swal({
+                    title: "Succes",
+                    text: "This Ticket's Status has changed",
+                    type: "success"
+                });
+                $("#DEPFilterCreateModalCenter").modal('hide');
+                window.location.reload();
+                location.reload();
+            }
+        })
+    }
+    function ShowComminIssues() {
+        var Departmint = document.getElementById("Department").value;
+         {
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/GETCommenIssueFromDepartments?Department=" + Department,
+                contentType: "application/json;charset=utf-8",
+                datatype: 'json',
+                success: function (json) {
+                    CommenIsuue = json;
+                    console.log(json);
+                    if (Department == "-1") {
+                        swal("sorry,please select the Department");
+                        return;
+                    }
+                    else {
+
+                    }
+                }
+            })
+         }
+    }
+    $(document).ready(function () {
+        $('.js-example-basic-multiple').select2();
+        GetData();
+    })
+    function GetData() {
+        $.ajax
+    }
+    function DrawDataTable() {
+
+
+
+        var html = '<div class="table-responsive">'
+
+        html += '<table class="table table-bordered table-striped mb-none" id="tbl_data" style=" width: -webkit-fill-available" cellspacing="0" >'
+
+        html += '     <thead>'
+
+        html += '      <tr >'
+
+        html += '       <th  style="text-align:center" >Code</th>'
+
+        html += '       <th  style="text-align:center">Date</th>'
+
+        html += '      <th  style="text-align:center" >Department</th>'
+
+        html += '      <th  style="text-align:center" >Manager</th>'
+
+        html += '      <th  style="text-align:center" >Commen Issue</th>'
+
+        html += '      <th  style="text-align:center" >Description</th>'
+
+        html += '      <th  style="text-align:center" >Notes</th>'
+
+        html += '      <th  style="text-align:center" >Options</th>'
+
+        html += '      </tr>'
+
+        html += '      </thead>'
+
+        html += '       <tbody>'
+
+        html += '       </tbody>'
+
+        html += '    </table>'
+
+        html += ' </div >'
+
+        $("#TableDIV").html(html);
+
+        var table = $('#tbl_data').DataTable({
+
+            "data": Data,
+
+            "columns": [
+
+                { data: "Code", "className": "hidden-xs hidden-sm" },
+
+                { data: "Datetime", "className": "hidden-xs hidden-sm" },
+
+                { data: "brandName", "className": "hidden-xs hidden-sm" },
+
+                { data: "statusName", "className": "hidden-xs hidden-sm" },
+
+                { data: "description", "className": "hidden-xs hidden-sm" },
+
+                { data: "notes", "className": "hidden-xs hidden-sm" },
+
+                { data: "cpu", "className": "hidden-xs hidden-sm" },
+
+                { data: "gpu", "className": "hidden-xs hidden-sm" },
+
+                { data: "ram", "className": "hidden-xs hidden-sm" },
+
+                { data: "storage", "className": "hidden-xs hidden-sm" },
+
+                { data: "avilabiltyStatus", "className": "hidden-xs hidden-sm" },
+
+                {
+
+                    "className": '',
+
+                    "orderable": false,
+
+                    "data": "ID",
+
+                    "mRender": function (data, type, full) {
+
+                        return '<div class="btn-group" style="text-align:center">' +
+
+                            '<button type="button" class="btn btn-soft-secondary btn-icon btn-sm" title="Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(\'' + full.serialNUmber + '\')" >Edit Status</button>'
+                        /*'<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">''</input>'*/
+
+                    }
+
+                },
+            ],
+
+            "order": [[0, 'asc']],
+
+        });
+
+    }
+</script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-4 col-sm-2">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterCreateModalCenter">Create A ticket</button>
+        </div>
+    </div>
+    <div class="modal fade" id="DEPFilterCreateModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create A New Brand </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <dev class="row">
+                            <div class="col-sm-4">
+                                <label for="Department">Departments:</label>
+                                <select class="js-example-basic-multiple" id="Department" onchange="GETTheManager()">
+                                    <option value="-1">--Select A Department--</option>
+                                    @foreach (var department in (IEnumerable<OctopaAudioApp.Models.SetupModels.AllowDEPToTicket>)ViewData["DepFilters"])
+                                    {
+                                        <option value="@department.Code">@department.Department</option>
+                                    }
+                                </select>
+                            </div>
+                        </dev>
+                        <dev class="row">
+                            <div class="col-sm-4">
+                                <label for="CommenIssue">Commen Issue:</label>
+                                <select class="js-example-basic-multiple" id="CommenIssue">
+                                    <option value="-1">--Select An Issue--</option>
+                                    <option value="0">--Others--</option>
+                                    @foreach (var Issue in (IEnumerable<OctopaAudioApp.Models.SetupModels.CommenIssues>)ViewData["CommenIssue"])
+                                    {
+                                        <option value="@Issue.Code">@Issue.Issue</option>
+                                    }
+                                </select>
+                            </div>
+                        </dev>
+                        <dev class="row">
+                            <div class="form-group">
+                                <label for="Description">Description:</label>
+                                <textarea class="form-control" id="DescriptionTXT" rows="2"></textarea>
+                            </div>
+                        </dev>
+                        <dev class="row">
+                            <div class="form-group">
+                                <label for="MAnager">This Ticket WIll be Sent To:</label>
+                                <label id="lblManger"></label>
+                              @*<input class="col-md-3" type="text" id="ManagerTXT" disabled="disabled" />*@
+                            </div>
+                        </dev>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewTicket()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
+        <thead class="bg-dark">
+            <tr>
+                <th class="center">Code</th>
+                <th class="center">Date</th>
+                <th class="center">Department</th>
+                <th class="center">Manager</th>
+                <th class="center">Status</th>
+                <th class="center">Commen Issue</th>
+                <th class="center">Description</th>
+                <th class="center">Notes</th>
+                <th class="center">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Ticket in (IEnumerable<OctopaAudioApp.Models.Tickets>)ViewData["TicketsList"])
+            {
+                <tr>
+                    <td id="lblCode">@Ticket.Code</td>
+                    <td id="lblCode">@Ticket.DateUpdate</td>
+                    <td id="lblDEP">@Ticket.Department</td>
+                    <td id="lblManager">@Ticket.Manager</td>
+                    <td id="lblStatus">@Ticket.status</td>
+                    <td id="lblCommenIssue">@Ticket.ComminIssue</td>
+                    <td id="lblDiscreption">@Ticket.Discription</td>
+                    <td id="lblNotes">@Ticket.Notes</td>
+                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(@Ticket.Code)">Edit</button><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(@Ticket.Code)">Assign To Employee</button><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(@Ticket.Code)">Add A note</button><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(@Ticket.Code)">Cancel</button></td>
+                    @*<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(@Ticket.Code)">Assign To Employee</button></td>
+                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(@Ticket.Code)">Add Note</button></td>
+                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(@Ticket.Code)">Change Status</button></td>*@
+                </tr>
+            }
+        </tbody>
+        <tbody id="DEPFilterBody">
+        </tbody>
+    </table>
+</body>
+</html>

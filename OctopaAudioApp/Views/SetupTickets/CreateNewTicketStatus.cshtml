@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Assets Status</title>
+    <link rel="stylesheet" href="~/assets/vendor/jquery-datatables-bs3/assets/css/datatables.css" />
+    <script>
+
+
+        function SaveNewStatus() {
+            var StatusName = document.getElementById("txtBName").value;
+            var Status = $("#txtBName").val();
+            if (StatusName == "") {
+                swal("sorry, you missed to enter Status's name");
+                return;
+            }
+            else {
+                //alert("Data Saved DOne")
+                $.ajax({
+                    type: "POST",
+                    url: "/SetupTickets/SaveNewStatus?StatusName=" + StatusName,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function myfunction(andrew) {
+                        swal({
+                            title: "Succes",
+                            text: "A New Status Has Been Saved",
+                            type: "success"
+                        }, function () {
+                            window.location.reload();
+                            location.reload();
+                        });
+                        document.getElementById("txtBName").value = "";
+                        $("#StatusNameCreateModalCenter").modal('hide');
+                    }
+                });
+            }
+        }
+    </script>
+    <script>
+        function EditStatus() {
+            var Code = document.getElementById("txtCode").innerHTML;
+            var NewStatus = document.getElementById("EditBName").value;
+
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/EditStatusByCode?Code=" + Code + "&NewStatus=" + NewStatus,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function myfunction(andrew) {
+                    swal({
+                        title: "Succes",
+                        text: "The Selected Status Has Been Edited",
+                        type: "success"
+                    }, function () {
+                        window.location.reload();
+                        location.reload();
+                    });
+                    document.getElementById("EditBName").value = "";
+                    $("#StatusNameEditModalCenter").modal('hide');
+                }
+            })
+        }
+        function Openedit(Code) {
+            console.log(Code);
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/OpenPopupStatus?Code=" + Code,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (json) {
+                    document.getElementById("txtCode").innerHTML = Code;
+                    document.getElementById("txtName").innerHTML = json;
+                    $("#StatusNameEditModalCenter").modal('show');
+
+                }
+            });
+
+        }
+    </script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-4 col-sm-2">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#StatusNameCreateModalCenter">Create a new</button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="StatusNameCreateModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create A New Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input class="form-control" id="txtBName" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewStatus()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="StatusNameEditModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit a Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="col-md-3">Code:</label>
+                        <label class="col-md-3" id="txtCode"></label>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-3">Old Name:</label>
+                        <label class="col-md-3" id="txtName"></label>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-3">New Name:</label>
+                        <div class="col-md-3">
+                            <input class="form-control" id="EditBName" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnEdit" value="Edit" class="btn btn-success" onclick="EditStatus()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
+        <thead class="bg-dark">
+            <tr>
+                <th class="center">Code</th>
+                <th class="center">Name</th>
+                <th class="center">Options</th>     
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in (IEnumerable<OctopaAudioApp.Models.SetupModels.TicketsStatus>)ViewData["StatusListData"])
+            {
+                <tr>
+                    <td id="lblCode">@item.Code</td>
+                    <td id="lblName">@item.StatusName</td>
+                    <td><button type="button" class="btn btn-primary" onclick="Openedit(@item.Code)">Edit</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>
+<script>
+
+</script>
