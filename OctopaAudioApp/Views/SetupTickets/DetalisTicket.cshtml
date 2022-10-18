@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    @{
+        var TicketForFunction = ViewData["Ticket"] as OctopaAudioApp.Models.Tickets;
+    }
+    <script>
+
+        $(document).ready(function () {
+            GetTicket();
+        })
+        function GetTicket() {
+            var Code = @TicketForFunction.Code
+                $.ajax({
+                    type: "GET",
+                    url: "/SetupTickets/GETTICKETDETAILS?Code=" + Code,
+                    contentType: "application/json;charset=utf-8",
+                    data: "{}",
+                    dataType: "json",
+                    success: function (json) {
+                        Data = json;
+                        console.log(Data);
+                        document.getElementById("CommenIsse").innerHTML = Data.ticket.issue
+                        document.getElementById("Department").innerHTML = Data.ticket.name
+                        document.getElementById("Status").innerHTML = Data.ticket.statusName
+                        document.getElementById("Manager").innerHTML = Data.ticket.englishName
+                        document.getElementById("AssignTOEMP").innerHTML = Data.ticketAssigendEMP.englishName
+                    }
+                })
+        }
+        function GETEMPFORAssign() {
+            var Code = @TicketForFunction.Code
+                $.ajax({
+                    type: "GET",
+                    url: "/SetupTickets/GETEmployeeOfDEP?Code=" + Code,
+                    contentType: "application/json;charset=utf-8",
+                    data: "{}",
+                    dataType: "json",
+                    success: function (json) {
+                        Data = json;
+                        console.log(Data);
+                        SelectEMP();
+                    }
+                })
+        }
+        function SelectEMP() {
+            var html = ''
+            html += '<select class="js-example-basic-multiple" id = "EMPSELECT">'
+            html += '<option value="-1">' + "--Select An Employee--" + '</option>'
+            for (var i = 0; i < Data.length; i++) {
+                html += '<option value =' + Data[i].code + '>' + Data[i].englishName + '</option>'
+            }
+            html += '</select>'
+            console.log(html);
+            $('#EMP').html(html);
+        }
+        function AddNote() {
+            var Note = document.getElementById("Notes").value;
+            var CodeTicket = @TicketForFunction.Code
+            $.ajax({
+                type: "GET",
+                url: "/SetupTickets/AddingNote?Note=" + Note + "&TicketCode=" + CodeTicket,
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (result) {
+                    swal({
+                        title: "Succes",
+                        text: "This Note Has Been Added To The Ticket",
+                        type: "success"
+
+                    },
+                        function () {
+                            window.location.reload();
+                        }
+                    );
+                    $("#AddNoteModalCenter").modal('hide');
+
+
+                },
+                error: function (result) {
+                    swal({
+                        title: "Failed",
+                        text: "Somthing Went Wrong",
+                        type: "error"
+                    });
+                }
+            })
+        }
+        function SaveNewTicket() {
+            var SelectedEMP = document.getElementById("EMPSELECT").value;
+            var CodeTicket = @TicketForFunction.Code
+            $.ajax({
+                type: "GET",
+                url: "/SetupTickets/SaveTicketEMPAssigin?EMP=" + SelectedEMP + "&TicketCode=" + CodeTicket,
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (result) {
+                    swal({
+                        title: "Succes",
+                        text: "This Ticket Has been Assigned To an Employee",
+                        type: "success"
+
+                    },
+                        function () {
+                        window.location.reload();
+                        }
+                    );
+                    $("#AssignToTicketModalCenter").modal('hide');
+
+
+                },
+                error: function (result) {
+                    swal({
+                        title: "Failed",
+                        text: "Somthing Went Wrong",
+                        type: "error"
+                    });
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    @{
+        var Ticket = ViewData["Ticket"] as OctopaAudioApp.Models.Tickets;
+    }
+    <dev class="row">
+        <div class="form-group">
+            <label for="Code">Code:</label>
+            @Ticket.Code
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label for="Date">Date:</label>
+            @Ticket.DateUpdate
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label>Department:</label>
+            <label id="Department"></label>
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label>Status:</label>
+            <label id="Status"></label>
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label>Commen Issue:</label>
+            <label id="CommenIsse"></label>
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label for="Description">Description:</label>
+            @Ticket.Discription
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label for="Description">Ticket Note:</label>
+            @Ticket.Notes <button id="AddNotes" data-toggle="modal" data-target="#AddNoteModalCenter">Add A Note</button>
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label for="TicketOWN">Ticket Owner:</label>
+            @Ticket.AddedUser
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label for="Description">Ticket Manager:</label>
+            <label id="Manager"></label>
+        </div>
+    </dev>
+    <dev class="row">
+        <div class="form-group">
+            <label for="Description">Assigend To:</label>
+            <label id="AssignTOEMP"></label> <button id="AssignEMP" data-toggle="modal" data-target="#AssignToTicketModalCenter" onclick="GETEMPFORAssign()">Assign An Employee</button>
+        </div>
+    </dev>
+
+    <div class="modal fade" id="AddNoteModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add a Note</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <dev class="row">
+                        <div class="col-sm-9">
+                            <label for="Note">Note:</label>
+                            <textarea class="form-control" id="Notes" rows="3"></textarea>
+                        </div>
+                    </dev>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="AddNote()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="AssignToTicketModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Assign An Employee </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <dev class="row">
+                        <div class="col-sm-4">
+                            <label for="EMP">Employee:</label>
+                            <div id="EMP" style="text-align:center"></div>
+                        </div>
+                    </dev>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="SaveNewTicket()" />
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

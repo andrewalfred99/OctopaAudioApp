@@ -15,7 +15,7 @@ namespace OctopaAudioApp.Models.SetupModels
 
         public int Department { get; set; }
 
-        public string UserManage { get; set; }
+        public int UserManage { get; set; }
 
         public Boolean AllowTickting { get; set; }
 

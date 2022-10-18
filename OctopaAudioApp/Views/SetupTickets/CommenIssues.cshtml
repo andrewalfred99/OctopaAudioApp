@@ -4,9 +4,126 @@
 
 <head>
     <script>
+        $(document).ready(function () {
+            $('.js-example-basic-multiple').select2();
+            GetData();
+            GetDEP();
+        })
 
+        function GetData() {
+            $.ajax({
+                type: "GET",
+                url: "/SetupTickets/GETTISSUEDATA",
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    console.log(Data);
+                    DrawDataTable();;
+
+                }
+            })
+        }
+
+        function GetDEP() {
+            $.ajax({
+                type: "GET",
+                url: "/SetupTickets/GETDEPSELECT",
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    console.log(Data);
+                    DrawSelectDEP();;
+                }
+            })
+        }
+            function DrawSelectDEP() {
+                var html = ''
+                html += '<select class="js-example-basic-multiple" id = "DEPDraw" onchange="GETTheManager()">'
+                html += '<option value="-1">' + "--Select A Department--" + '</option>'
+                for (var i = 0; i < Data.length; i++) {
+                    html += '<option value =' + Data[i].code + '>' + Data[i].name + '</option>'
+                }
+                html += '</select>'
+                console.log(html);
+                $('#DEP').html(html);
+            }
+        function DrawDataTable() {
+
+
+
+            var html = '<div class="table-responsive">'
+
+            html += '<table class="table table-bordered table-striped mb-none" id="tbl_data" style=" width: -webkit-fill-available" cellspacing="0" >'
+
+            html += '     <thead>'
+
+            html += '      <tr >'
+
+            html += '       <th  style="text-align:center" >Code</th>'
+
+            html += '      <th  style="text-align:center" >Department</th>'
+
+            html += '      <th  style="text-align:center" >Issue</th>'
+
+            html += '      <th  style="text-align:center" >Options</th>'
+
+            html += '      </tr>'
+
+            html += '      </thead>'
+
+            html += '       <tbody>'
+
+            html += '       </tbody>'
+
+            html += '    </table>'
+
+            html += ' </div >'
+
+            $("#TableDIV").html(html);
+
+            var table = $('#tbl_data').DataTable({
+
+                "data": Data,
+
+                "columns": [
+
+                    { data: "code", "className": "hidden-xs hidden-sm" },
+
+                    { data: "name", "className": "hidden-xs hidden-sm" },
+
+                    { data: "issue", "className": "hidden-xs hidden-sm" },
+
+                    {
+
+                        "className": '',
+
+                        "orderable": false,
+
+                        "data": "ID",
+
+                        "mRender": function (data, type, full) {
+
+                            return '<div class="btn-group" style="text-align:center">' +
+
+                                '<button type="button" class="btn btn-soft-secondary btn-icon btn-sm" title="Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(\'' + full.serialNUmber + '\')" >Edit</button>'
+                            /*'<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">''</input>'*/
+
+                        }
+
+                    },
+                ],
+
+                "order": [[0, 'asc']],
+
+            });
+
+        }
         function SaveNewIssue() {
-            var Department = document.getElementById("Department").value;
+            var Department = document.getElementById("DEPDraw").value;
             var CommenIssue = $("#CommenIssueTXT").val();
             if (Department == "-1") {
                 swal("sorry,please select the Department");
@@ -35,8 +152,8 @@
                     }
                 });
             }
-    }
-    </script>
+        }
+</script>
 </head>
 <body>
     <div class="row">
@@ -57,14 +174,15 @@
                     <form>
                         <dev class="row">
                             <div class="col-sm-4">
-                                <label for="Department">Departments:</label>
+                                <div id="DEP" style="text-align:center"></div>
+                                @*<label for="Department">Departments:</label>
                                 <select class="js-example-basic-multiple" id="Department">
                                     <option value="-1">--Select A Department--</option>
                                     @foreach (var department in (IEnumerable<OctopaAudioApp.Models.SetupModels.AllowDEPToTicket>)ViewData["DepFilters"])
                                     {
-                                        <option value="@department.Code">@department.Department</option>
+                                        <option value="@department.Department">@department.Department</option>
                                     }
-                                </select>
+                                </select>*@
                             </div>
                         </dev>
                         <dev class="row">
@@ -85,8 +203,8 @@
             </div>
         </div>
     </div>
-
-    <table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
+    <div id="TableDIV" style="text-align:center"></div>
+    @*<table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
         <thead class="bg-dark">
             <tr>
                 <th class="center">Code</th>
@@ -106,6 +224,6 @@
                 </tr>
             }
         </tbody>
-    </table>
+    </table>*@
 </body>
 </html>

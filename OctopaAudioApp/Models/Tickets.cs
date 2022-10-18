@@ -23,7 +23,7 @@ namespace OctopaAudioApp.Models
 
         public int status { get; set; }
 
-        public string AssignTOEMP { get; set; }
+        public int AssignTOEMP { get; set; }
 
         public string Manager { get; set; }
         

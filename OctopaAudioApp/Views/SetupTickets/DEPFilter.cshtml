@@ -57,7 +57,7 @@
                 html += '<tr>'
                 html += '<td>' + Data[i].code + '</td>'
                 html += '<td>' + Data[i].department + '</td>'
-                html += '<td>' + Data[i].userManage + '</td>'
+                html += '<td>' + Data[i].englishName + '</td>'
                 html += '<td>' + Data[i].allowTickting + '</td>'
                 html += '<td>' + '<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">' + '</input>' + '</td>'
 
@@ -76,14 +76,126 @@
                     Data = json;
                     console.log(Data)
                     document.getElementById("NEWDepartment").value = Data.department
-                    document.getElementById("NEWManager").value = Data.userManage
+                    document.getElementById("NEWManager").value = Data.englishName
                     document.getElementById("Visibilty").value = Data.allowTickting
                     document.getElementById("txtDEPCode").value = Data.code
 
                 }
             })
         }
+        function DEPFilterVisibilty(id) {
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/DEPFilterVisibiltyChange?Code=" + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function myfunction(andrew) {
+                    swal({
+                        title: "Succes",
+                        text: "The Visibilty of this department has been changed.",
+                        type: "success"
+                    }, function () {
+                        window.location.reload();
+                        location.reload();
+                    });
+                }
+            })
+        }
 
+        $(document).ready(function () {
+            $('.js-example-basic-multiple').select2();
+            GetData();
+        })
+        function GetData() {
+            $.ajax({
+                type: "GET",
+                url: "/SetupTickets/GETDALLOWDEPTOTICKET",
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    console.log(Data);
+                    DrawDataTable();;
+
+                }
+            })
+        }
+        function DrawDataTable() {
+
+
+
+            var html = '<div class="table-responsive">'
+
+            html += '<table class="table table-bordered table-striped mb-none" id="tbl_data" style=" width: -webkit-fill-available" cellspacing="0" >'
+
+            html += '     <thead>'
+
+            html += '      <tr >'
+
+            html += '       <th  style="text-align:center" >Code</th>'
+
+            html += '      <th  style="text-align:center" >Department</th>'
+
+            html += '      <th  style="text-align:center" >Manager</th>'
+
+            html += '      <th  style="text-align:center" >Visibilty</th>'
+
+            html += '      <th  style="text-align:center" >Options</th>'
+
+            html += '      </tr>'
+
+            html += '      </thead>'
+
+            html += '       <tbody>'
+
+            html += '       </tbody>'
+
+            html += '    </table>'
+
+            html += ' </div >'
+
+            $("#TableDIV").html(html);
+
+            var table = $('#tbl_data').DataTable({
+
+                "data": Data,
+
+                "columns": [
+
+                    { data: "code", "className": "hidden-xs hidden-sm" },
+
+                    { data: "name", "className": "hidden-xs hidden-sm" },
+
+                    { data: "englishName", "className": "hidden-xs hidden-sm" },
+
+                    { data: "allowTickting", "className": "hidden-xs hidden-sm" },
+
+                    {
+
+                        "className": '',
+
+                        "orderable": false,
+
+                        "data": "ID",
+
+                        "mRender": function (data, type, full) {
+
+                            return '<div class="btn-group" style="text-align:center">' +
+
+                                '<button type="button" class="btn btn-soft-secondary btn-icon btn-sm" title="Edit Status" data-toggle="modal" data-target="#DEPFilterEditModalCenter" onclick="openEdit(\'' + full.code + '\')" >Edit</button>' + '<button type="button" class="btn btn-soft-secondary btn-icon btn-sm" onclick="DEPFilterVisibilty(\'' + full.code + '\')" >Turn on/Off Visibilty</button>'
+                            /*'<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">''</input>'*/
+
+                        }
+
+                    },
+                ],
+
+                "order": [[0, 'asc']],
+
+            });
+
+        }
         function EditSelectedDEPFilter() {
             var NEWDEP = document.getElementById("NEWDepartment").value;
             var NEWManager = document.getElementById("NEWManager").value;
@@ -159,15 +271,18 @@
                                 <label for="Manager">Manager:</label>
                                 <select class="js-example-basic-multiple" id="Manager">
                                     <option value="-1">--Select A Manager--</option>
-                                    @foreach (var User in (IEnumerable<IdentityUser>)ViewData["UsersList"])
+                                    @foreach (var Manager in (IEnumerable<OctopaAudioApp.Models.Employee>)ViewData["ManagerList"])
                                     {
-                                        <option value="@User.UserName">@User.UserName</option>
+                                        <option value="@Manager.Code">@Manager.EnglishName</option>
                                     }
                                 </select>
                             </div>
                         </dev>
                         <div>
-
+                            @*@foreach (var User in (IEnumerable<IdentityUser>)ViewData["UsersList"])
+        {
+            <option value="@User.UserName">@User.UserName</option>
+        }*@
                         </div>
                     </form>
                 </div>
@@ -211,10 +326,14 @@
                                 <label for="Manager">Manager:</label>
                                 <select class="js-example-basic-multiple" id="NEWManager">
                                     <option value="-1">--Select A Manager--</option>
-                                    @foreach (var User in (IEnumerable<IdentityUser>)ViewData["UsersList"])
+                                    @foreach (var Manager in (IEnumerable<OctopaAudioApp.Models.Employee>)ViewData["ManagerList"])
                                     {
-                                        <option value="@User.UserName">@User.UserName</option>
+                                        <option value="@Manager.Code">@Manager.EnglishName</option>
                                     }
+                                    @*@foreach (var User in (IEnumerable<IdentityUser>)ViewData["UsersList"])
+                                     {
+                                         <option value="@User.UserName">@User.UserName</option>
+                                      }*@
                                 </select>
                             </div>
                         </dev>
@@ -242,7 +361,8 @@
             </div>
         </div>
     </div>
-    <table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
+    <div id="TableDIV" style="text-align:center"></div>
+    @*<table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
         <thead class="bg-dark">
             <tr>
                 <th class="center">Code</th>
@@ -265,7 +385,7 @@
             }
         </tbody>
         <tbody id="DEPFilterBody">
-        </tbody>
+        </tbody>*@
     </table>
 </body>
 </html>

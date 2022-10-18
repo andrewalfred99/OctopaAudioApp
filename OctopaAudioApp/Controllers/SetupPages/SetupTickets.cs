@@ -43,16 +43,18 @@ namespace OctopaAudioApp.Controllers.SetupPages
             }
 
             var DEPList = _Context.AllowDEPToTickets.ToList();
+            var Manager = _Context.Employees.ToList();
             var DEParmentList = _Context.Departments.ToList();
             var UsersList = userManager.Users.ToList();
             ViewData["DepList"] = DEPList;
+            ViewData["ManagerList"] = Manager;
             ViewData["DepartmentsList"] = DEParmentList;
             ViewData["UserList"] = UsersList;
             ViewData["UsersList"] = members;
             return View();
         }
 
-        public JsonResult SaveDEPFilter(int Department, string Manager)
+        public JsonResult SaveDEPFilter(int Department, int Manager)
         {
             try
             {
@@ -77,8 +79,9 @@ namespace OctopaAudioApp.Controllers.SetupPages
         public JsonResult getManagerAndDepartmentName()
         {
             var DEPFilter = _Context.AllowDEPToTickets.Join(_Context.Departments, a => a.Department, b => b.Code, (a, b) => new { a, b })
-                .Join(userManager.Users, c => c.a.UserManage, d => d.Id, (c, d) => new { c, d })
-                .Select(A => new { A.d.UserName, A.c.b.Name, A.c.a.Code, A.c.a.AllowTickting }).ToList();
+                .Join(_Context.Employees,c=>c.a.UserManage, d=>d.Code, (c,d) => new {c,d})
+                //.Join(userManager.Users, c => c.a.UserManage, d => d.Id, (c, d) => new { c, d })
+                .Select(A => new { A.d.EnglishName, A.c.b.Name, A.c.a.Code, A.c.a.AllowTickting }).ToList();
             return Json(DEPFilter);
         }
         public IActionResult CommenIssues()
@@ -133,7 +136,28 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
             return View();
         }
-        
+        public JsonResult DEPFilterVisibiltyChange(int Code)
+        {
+            try
+            {
+                var find = _Context.AllowDEPToTickets.Where(A => A.Code == Code).FirstOrDefault();
+                if(find.AllowTickting == true)
+                {
+                    find.AllowTickting = false;
+                    _Context.SaveChanges();
+                }
+                else
+                {
+                    find.AllowTickting = true;
+                    _Context.SaveChanges();
+                }
+                return Json("Done");
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
         public JsonResult SaveTickets(int DEP, int Issue, string Description, string Manager)
         {
             try
@@ -183,7 +207,7 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
             return Json(SlectedDEP);
         }
-        public JsonResult EditDEPFilter(int Department, string Manager, bool visibilty, int Code)
+        public JsonResult EditDEPFilter(int Department, int Manager, bool visibilty, int Code)
         {
             try
             {
@@ -212,10 +236,17 @@ namespace OctopaAudioApp.Controllers.SetupPages
         public JsonResult GETNAMEs(int DEPFilter)
         {
             var ManagerName = _Context.AllowDEPToTickets.Join(_Context.Departments, a => a.Department, b => b.Code, (a, b) => new { a, b })
-                .Select(A => new { A.b.Name, A.a.UserManage, A.a.Code })
+                .Join(_Context.Employees,c=>c.a.UserManage, d=>d.Code,(c,d)=> new {c,d})
+                .Select(A => new { A.c.b.Name, A.d.EnglishName,A.c.a.UserManage, A.c.a.Code })
                 .Where(S => S.Code == DEPFilter).FirstOrDefault();
 
-            return Json(ManagerName);
+            var Issue = _Context.CommenIssues.Join(_Context.AllowDEPToTickets, a=>a.Department, b=>b.Code,(a,b)=> new {a,b})
+                .Where(S => S.b.Code == DEPFilter)
+                .Select(A => new { A.a.Code, A.a.Issue, A.b.Department, })
+                 .ToList();
+            
+            var ALL = new { ManagerName, Issue };
+            return Json(ALL);
         }
         public JsonResult GetTickets(int DEP, int Status, int Issue)
         {
@@ -236,6 +267,186 @@ namespace OctopaAudioApp.Controllers.SetupPages
             var AllNames = new { DepName, StatusName, CommenIssue };
 
             return Json(AllNames);
+        }
+       
+
+        public JsonResult GETALLTICKETITEM()
+        {
+            try
+            {
+                var Data = _Context.Tickets.Join(_Context.AllowDEPToTickets, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                    .Join(_Context.Departments, c => c.b.Department, d => d.Code, (c, d) => new { c, d })
+                    .Join(_Context.TicketsStatuses, e => e.c.a.status, f => f.Code, (e, f) => new { e, f })
+                    .Join(_Context.CommenIssues, g => g.e.c.a.ComminIssue, h => h.Code, (g, h) => new { g, h })
+                    .Join(_Context.Employees, i=>i.g.e.c.b.UserManage, j=> j.Code, (i,j)=>new {i,j})
+                    .Select(A => new { A.i.g.e.c.a.Code, A.i.g.e.d.Name, A.i.h.Issue, A.i.g.f.StatusName, A.i.g.e.c.a.DateUpdate, A.i.g.e.c.a.Manager, A.i.g.e.c.a.Notes, A.i.g.e.c.a.Discription, A.i.g.e.c.a.AddedUser, A.i.g.e.c.a.AssignTOEMP, A.j.EnglishName }).ToList();
+                return Json(Data);
+                    
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+        public JsonResult GETTISSUEDATA()
+        {
+            try
+            {
+                var Issue = _Context.CommenIssues.Join(_Context.AllowDEPToTickets, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                    .Join(_Context.Departments, c=>c.b.Department, d=>d.Code,(c,d)=> new {c,d})
+                    .Select(A => new { A.d.Name, A.c.b.Department, A.c.a.Code, A.c.a.Issue }).ToList();
+                return Json(Issue);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        
+        public JsonResult GETDALLOWDEPTOTICKET()
+        {
+            try
+            {
+                var DEP = _Context.AllowDEPToTickets.Join(_Context.Departments, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                    .Join(_Context.Employees,c=>c.a.UserManage, d=>d.Code, (c,d) => new {c,d})
+                    .Select(A => new { A.c.a.Code, A.c.b.Name, A.d.EnglishName, A.c.a.AllowTickting }).ToList();
+                return Json(DEP);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public JsonResult GETDEPSELECT()
+        {
+            try
+            {
+                var Data = _Context.AllowDEPToTickets.Join(_Context.Departments, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                            .Select(A => new { A.a.Code, A.b.Name, A.a.Department, A.a.AllowTickting }).Where(S =>S.AllowTickting == true ).ToList();
+
+                return Json(Data);
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+        public JsonResult GETTICKETDETAILS(int Code)
+        {
+            try
+            {
+                var Ticket = _Context.Tickets.Join(_Context.AllowDEPToTickets, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                            .Join(_Context.Departments, c => c.b.Department, d => d.Code, (c, d) => new { c, d })
+                            .Join(_Context.CommenIssues, e => e.c.a.ComminIssue, f => f.Code, (e, f) => new { e, f })
+                            .Join(_Context.TicketsStatuses, j => j.e.c.a.status, h => h.Code, (j, h) => new { j, h })
+                            .Join(_Context.Employees,i=>i.j.e.c.b.UserManage, g=>g.Code, (i,g)=> new {i,g})
+                            .Select(A => new {A.i.j.e.d.Name, A.i.j.f.Issue, A.i.h.StatusName, A.i.j.e.c.a.Code, A.g.EnglishName })
+                            .Where(A => A.Code == Code).FirstOrDefault();
+                var TicketAssigendEMP = _Context.Tickets.Join(_Context.Employees, a => a.AssignTOEMP, b => b.Code, (a, b) => new { a, b })
+                            .Select(A => new { A.a.Code, A.a.AssignTOEMP, A.b.EnglishName })
+                            .Where(S => S.Code == Code).FirstOrDefault();
+
+                var AllTicketNames = new { Ticket, TicketAssigendEMP};
+                return Json(AllTicketNames);
+               
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public JsonResult GETIssueSELECT( int Department)
+        {
+            try
+            {
+                var Data = _Context.CommenIssues.Select(A => new { A.Code, A.Issue, A.Department })
+                    .Where(S =>S.Department == Department).ToList();
+
+                return Json(Data);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public JsonResult GETEmployeeOfDEP(int Code)
+        {
+            try
+            {
+                var EMP = _Context.Tickets.Join(_Context.AllowDEPToTickets, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                    .Join(_Context.Departments, c => c.b.Department, d => d.Code, (c, d) => new { c, d })
+                    .Join(_Context.Employees, e => e.d.Code, f => f.Department, (e, f) => new { e, f })
+                    .Where(S => S.e.c.a.Code == Code)
+                    .Select(A => new { A.f.EnglishName, A.f.Code }).ToList();
+                    
+                return Json(EMP);
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+        public JsonResult SaveTicketEMPAssigin(int EMP, int TicketCode)
+        {
+            try
+            {
+                var find = _Context.Tickets.Find(TicketCode);
+                find.AssignTOEMP = EMP;
+                find.status = 2;
+                _Context.SaveChanges();
+                return Json("Done");
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public JsonResult CancelTicket( int TicketCode)
+        {
+            try
+            {
+                var find = _Context.Tickets.Find(TicketCode);
+                find.status = 4;
+                _Context.SaveChanges();
+                return Json("Done");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public JsonResult FinishTicket(int TicketCode)
+        {
+            try
+            {
+                var find = _Context.Tickets.Find(TicketCode);
+                find.status = 5;
+                _Context.SaveChanges();
+                return Json("Done");
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public JsonResult AddingNote(int TicketCode, string Note)
+        {
+            try
+            {
+                var find = _Context.Tickets.Find(TicketCode);
+                find.Notes = Note;
+                _Context.SaveChanges();
+                return Json("Done");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public JsonResult EditStatusByCode(int Code, string NewStatus)
@@ -274,6 +485,24 @@ namespace OctopaAudioApp.Controllers.SetupPages
             var StatusList = _Context.TicketsStatuses.ToList();
             ViewData["StatusListData"] = StatusList;
             return View();
+        }
+
+        public IActionResult DetalisTicket(int Code)
+        {
+            try
+            {
+                var StatusList = _Context.TicketsStatuses.ToList();
+                var Ticket = _Context.Tickets.Where(S => S.Code == Code).FirstOrDefault();
+                var CommenIssue = _Context.CommenIssues.ToList();
+                ViewData["StatusListData"] = StatusList;
+                ViewData["Ticket"] = Ticket;
+                ViewData["CommenIssueList"] = CommenIssue;
+
+                return View();
+            }
+            catch(Exception ex) {
+                throw;
+            }
         }
         public JsonResult SaveNewStatus(string StatusName)
         {
