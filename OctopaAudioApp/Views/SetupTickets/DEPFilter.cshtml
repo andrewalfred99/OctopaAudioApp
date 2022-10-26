@@ -7,7 +7,7 @@
 
         function SaveNewDEPTicket() {
             var Department = document.getElementById("Department").value;
-            var Manager = $("#Manager").val();
+            var Manager = $("#EMPSELECT").val();
             if (Department == "-1") {
                 swal("sorry,please select the Department");
                 return;
@@ -106,6 +106,29 @@
             $('.js-example-basic-multiple').select2();
             GetData();
         })
+        function GETEMPloyeeOfDEP() {
+            var DEPSELECT = document.getElementById("Department").value
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/EMPForSelectedDEP?Code=" + DEPSELECT,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    console.log(Data);
+                    var html = ''
+                    html += '<select class="js-example-basic-multiple" id = "EMPSELECT">'
+                    html += '<option value="-1">' + "--Select An Employee--" + '</option>'
+                    for (var i = 0; i < Data.length; i++) {
+                        html += '<option value =' + Data[i].code + '>' + Data[i].englishName + '</option>'
+                    }
+                    html += '</select>'
+                    console.log(html);
+                    $('#EMPFromDEP').html(html);
+
+                }
+            })
+        }
         function GetData() {
             $.ajax({
                 type: "GET",
@@ -257,7 +280,7 @@
                         <dev class="row">
                             <div class="col-sm-4">
                                 <label for="Department">Departments:</label>
-                                <select class="js-example-basic-multiple" id="Department">
+                                <select class="js-example-basic-multiple" id="Department" onchange="GETEMPloyeeOfDEP()">
                                     <option value="-1">--Select A Department--</option>
                                     @foreach (var department in (IEnumerable<OctopaAudioApp.Models.Department>)ViewData["DepartmentsList"])
                                     {
@@ -269,13 +292,15 @@
                         <dev class="row">
                             <div class="col-sm-4">
                                 <label for="Manager">Manager:</label>
-                                <select class="js-example-basic-multiple" id="Manager">
+                                <div id="EMPFromDEP" style="text-align:center"></div>
+                                @*<select class="js-example-basic-multiple" id="Manager">
                                     <option value="-1">--Select A Manager--</option>
+
                                     @foreach (var Manager in (IEnumerable<OctopaAudioApp.Models.Employee>)ViewData["ManagerList"])
                                     {
                                         <option value="@Manager.Code">@Manager.EnglishName</option>
                                     }
-                                </select>
+                                </select>*@
                             </div>
                         </dev>
                         <div>

@@ -109,7 +109,7 @@
 
                             return '<div class="btn-group" style="text-align:center">' +
 
-                                '<button type="button" class="btn btn-soft-secondary btn-icon btn-sm" title="Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(\'' + full.serialNUmber + '\')" >Edit</button>'
+                                '<button type="button" class="btn btn-soft-secondary btn-icon btn-sm" title="Edit Status" data-toggle="modal" data-target="#ComminIssueEditModalCenter" onclick="getCommenIssueForEditing(' + full.code + ')" >Edit</button>'
                             /*'<input type = "button" value = "Edit Status" data-toggle="modal" data-target="#EditStatus" onclick="ViewStatus(' + i + ')" class = "btn btn-sm btn-secondary">''</input>'*/
 
                         }
@@ -125,8 +125,8 @@
         function SaveNewIssue() {
             var Department = document.getElementById("DEPDraw").value;
             var CommenIssue = $("#CommenIssueTXT").val();
-            if (Department == "-1") {
-                swal("sorry,please select the Department");
+            if (Department == "-1" || CommenIssue == null) {
+                swal("sorry,please fill the missing ");
                 return;
             }
             else {
@@ -153,6 +153,48 @@
                 });
             }
         }
+        function getCommenIssueForEditing(id) {
+            $.ajax({
+                type: "GET",
+                url: "/SetupTickets/GetComminIssueInfo?Code=" + id,
+                contentType: "application/json;charset=utf-8",
+                data: "{}",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    console.log(Data);
+                    document.getElementById("CodeTexT").innerHTML = Data.code
+                    document.getElementById("DEPNAME").innerHTML = Data.name
+                    document.getElementById("DEPCODE").innerHTML = Data.department
+                    document.getElementById("CommenIssueEditTXT").value = Data.issue
+                }
+            })
+            
+        }
+        function EditCommenIssue() {
+            var Id = document.getElementById("CodeTexT").innerHTML;
+            var Issue = document.getElementById("CommenIssueEditTXT").value;
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/EditCommenIssue?Code=" + Id + "&Issue=" + Issue,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function myfunction(andrew) {
+                    swal({
+                        title: "Succes",
+                        text: "This Commen Issue Has Been Edited",
+                        type: "success"
+                    }, function () {
+                        window.location.reload();
+                        location.reload();
+                    }
+                    );
+                    $("#ComminIssueEditModalCenter").modal('hide');
+
+                }
+            });
+        }
+        
 </script>
 </head>
 <body>
@@ -176,13 +218,13 @@
                             <div class="col-sm-4">
                                 <div id="DEP" style="text-align:center"></div>
                                 @*<label for="Department">Departments:</label>
-                                <select class="js-example-basic-multiple" id="Department">
-                                    <option value="-1">--Select A Department--</option>
-                                    @foreach (var department in (IEnumerable<OctopaAudioApp.Models.SetupModels.AllowDEPToTicket>)ViewData["DepFilters"])
-                                    {
-                                        <option value="@department.Department">@department.Department</option>
-                                    }
-                                </select>*@
+                                    <select class="js-example-basic-multiple" id="Department">
+                                        <option value="-1">--Select A Department--</option>
+                                        @foreach (var department in (IEnumerable<OctopaAudioApp.Models.SetupModels.AllowDEPToTicket>)ViewData["DepFilters"])
+                                        {
+                                            <option value="@department.Department">@department.Department</option>
+                                        }
+                                    </select>*@
                             </div>
                         </dev>
                         <dev class="row">
@@ -203,27 +245,72 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="ComminIssueEditModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Editing A Commen Issue </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <dev class="row">
+                            <div class="col-sm-4">
+                                <label for="Department">Code:</label>
+                                <label id="CodeTexT"></label>
+                            </div>
+                        </dev>
+                        <dev class="row">
+                            <div class="col-sm-4">
+                                <label for="Department">Department:</label><label id="DEPNAME"></label>
+                                <label id="DEPCODE" hidden></label>
+                                
+                               
+                            </div>
+                        </dev>
+                        <dev class="row">
+                            <div class="form-group">
+                                <label for="Manager">Commen Issue:</label>
+                                <textarea class="form-control" id="CommenIssueEditTXT" rows="2"></textarea>
+                            </div>
+                        </dev>
+                        <div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="button" id="btnSave" value="Save" class="btn btn-success" onclick="EditCommenIssue()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="TableDIV" style="text-align:center"></div>
     @*<table class="table table-bordered table-hover" id="datatable-tabletools" style="text-align:center">
-        <thead class="bg-dark">
-            <tr>
-                <th class="center">Code</th>
-                <th class="center">Department</th>
-                <th class="center">Issue</th>
-                <th class="center">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var CommenIssues in (IEnumerable<OctopaAudioApp.Models.SetupModels.CommenIssues>)ViewData["CommenIssueses"])
-            {
+            <thead class="bg-dark">
                 <tr>
-                    <td id="lblCode">@CommenIssues.Code</td>
-                    <td id="lblName">@CommenIssues.Department</td>
-                    <td id="lblName">@CommenIssues.Issue</td>
-                    <td><button type="button" class="btn btn-primary" onclick="Openedit(@CommenIssues.Code)">Edit</button></td>
+                    <th class="center">Code</th>
+                    <th class="center">Department</th>
+                    <th class="center">Issue</th>
+                    <th class="center">Options</th>
                 </tr>
-            }
-        </tbody>
-    </table>*@
+            </thead>
+            <tbody>
+                @foreach (var CommenIssues in (IEnumerable<OctopaAudioApp.Models.SetupModels.CommenIssues>)ViewData["CommenIssueses"])
+                {
+                    <tr>
+                        <td id="lblCode">@CommenIssues.Code</td>
+                        <td id="lblName">@CommenIssues.Department</td>
+                        <td id="lblName">@CommenIssues.Issue</td>
+                        <td><button type="button" class="btn btn-primary" onclick="Openedit(@CommenIssues.Code)">Edit</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>*@
 </body>
 </html>

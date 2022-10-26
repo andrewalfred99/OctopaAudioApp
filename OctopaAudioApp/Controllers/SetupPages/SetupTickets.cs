@@ -59,13 +59,20 @@ namespace OctopaAudioApp.Controllers.SetupPages
             try
             {
                 AllowDEPToTicket newDEP = new AllowDEPToTicket();
+                CommenIssues newCommen = new CommenIssues();
                 newDEP.Code = _Context.AllowDEPToTickets.Select(c => c.Code).DefaultIfEmpty().Max() + 1;
                 newDEP.Department = Department;
                 newDEP.UserManage = Manager;
                 newDEP.AllowTickting = true;
                 newDEP.AddedUser = User.Identity.Name;
                 newDEP.DateUpdate = DateTime.Now;
+                newCommen.Code = _Context.CommenIssues.Select(c => c.Code).DefaultIfEmpty().Max() + 1;
+                newCommen.Department = newDEP.Code;
+                newCommen.Issue = "Others";
+                newCommen.AddUser = User.Identity.Name;
+                newCommen.DateUpdate = DateTime.Now;
                 _Context.AllowDEPToTickets.Add(newDEP);
+                _Context.CommenIssues.Add(newCommen);
                 _Context.SaveChanges();
                 return Json("Done");
             }
@@ -201,6 +208,32 @@ namespace OctopaAudioApp.Controllers.SetupPages
 
             return Json(commenIssue);
         }
+        public JsonResult GetComminIssueInfo(int Code)
+        {
+            var find = _Context.CommenIssues.Join(_Context.AllowDEPToTickets, a => a.Department, b => b.Code, (a, b) => new { a, b })
+                .Join(_Context.Departments, c => c.b.Department, d => d.Code, (c, d) => new { c, d })
+                .Select(A => new { A.c.a.Code, A.d.Name, A.c.a.Department, A.c.a.Issue })
+                .Where(S => S.Code == Code).FirstOrDefault();
+
+            return Json(find);
+                
+        }
+
+        public JsonResult EditCommenIssue(int Code, string Issue)
+        {
+            try
+            {
+                var find = _Context.CommenIssues.Where(a => a.Code == Code).FirstOrDefault();
+                find.Issue = Issue;
+                _Context.SaveChanges();
+                return Json("Done");
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
         public JsonResult getDEPINFO(int Code)
         {
             var SlectedDEP = _Context.AllowDEPToTickets.Where(x => x.Code == Code).FirstOrDefault();
@@ -477,6 +510,18 @@ namespace OctopaAudioApp.Controllers.SetupPages
             catch (Exception ex)
             {
 
+                throw;
+            }
+        }
+        public JsonResult EMPForSelectedDEP(int Code)
+        {
+            try
+            {
+                var find = _Context.Employees.Where(S => S.Department == Code).ToList();
+                return Json(find);
+            }
+            catch(Exception ex)
+            {
                 throw;
             }
         }
