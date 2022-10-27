@@ -125,7 +125,7 @@
         function SaveNewIssue() {
             var Department = document.getElementById("DEPDraw").value;
             var CommenIssue = $("#CommenIssueTXT").val();
-            if (Department == "-1" || CommenIssue == null) {
+            if (Department == "-1" || CommenIssue == "") {
                 swal("sorry,please fill the missing ");
                 return;
             }
@@ -174,25 +174,31 @@
         function EditCommenIssue() {
             var Id = document.getElementById("CodeTexT").innerHTML;
             var Issue = document.getElementById("CommenIssueEditTXT").value;
-            $.ajax({
-                type: "POST",
-                url: "/SetupTickets/EditCommenIssue?Code=" + Id + "&Issue=" + Issue,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function myfunction(andrew) {
-                    swal({
-                        title: "Succes",
-                        text: "This Commen Issue Has Been Edited",
-                        type: "success"
-                    }, function () {
-                        window.location.reload();
-                        location.reload();
-                    }
-                    );
-                    $("#ComminIssueEditModalCenter").modal('hide');
+            if (Issue == "") {
+                swal("sorry, please fill the Commen Issue ");
+                return;
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/SetupTickets/EditCommenIssue?Code=" + Id + "&Issue=" + Issue,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function myfunction(andrew) {
+                        swal({
+                            title: "Succes",
+                            text: "This Commen Issue Has Been Edited",
+                            type: "success"
+                        }, function () {
+                            window.location.reload();
+                            location.reload();
+                        }
+                        );
+                        $("#ComminIssueEditModalCenter").modal('hide');
 
-                }
-            });
+                    }
+                });
+            }
         }
         
 </script>

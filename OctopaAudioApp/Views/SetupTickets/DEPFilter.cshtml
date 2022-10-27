@@ -8,8 +8,8 @@
         function SaveNewDEPTicket() {
             var Department = document.getElementById("Department").value;
             var Manager = $("#EMPSELECT").val();
-            if (Department == "-1") {
-                swal("sorry,please select the Department");
+            if (Department == "-1" || Manager =="-1") {
+                swal("sorry, please Fill the Gaps");
                 return;
             }
             else {
@@ -29,7 +29,6 @@
                         });
 
                         document.getElementById("Department").value = "-1"
-                        document.getElementById("Manager").value = "-1"
                         $("#DEPFilterCreateModalCenter").modal('hide');
 
                     }
@@ -75,9 +74,9 @@
                 success: function (json) {
                     Data = json;
                     console.log(Data)
-                    document.getElementById("NEWDepartment").value = Data.department
-                    document.getElementById("NEWManager").value = Data.englishName
-                    document.getElementById("Visibilty").value = Data.allowTickting
+                    /*document.getElementById("NEWDepartment").value = Data.department*/
+                    /*document.getElementById("EMPSELECTEdit").value = Data.englishName*/
+                    /*document.getElementById("Visibilty").value = Data.allowTickting*/
                     document.getElementById("txtDEPCode").value = Data.code
 
                 }
@@ -125,6 +124,29 @@
                     html += '</select>'
                     console.log(html);
                     $('#EMPFromDEP').html(html);
+
+                }
+            })
+        }
+        function GETEMPloyeeOfDEPForEdit() {
+            var DEPSELECT = document.getElementById("NEWDepartment").value
+            $.ajax({
+                type: "POST",
+                url: "/SetupTickets/EMPForSelectedDEP?Code=" + DEPSELECT,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (json) {
+                    Data = json;
+                    console.log(Data);
+                    var html = ''
+                    html += '<select class="js-example-basic-multiple" id = "EMPSELECTEdit">'
+                    html += '<option value="-1">' + "--Select An Employee--" + '</option>'
+                    for (var i = 0; i < Data.length; i++) {
+                        html += '<option value =' + Data[i].code + '>' + Data[i].englishName + '</option>'
+                    }
+                    html += '</select>'
+                    console.log(html);
+                    $('#EMPFromDEPEDIT').html(html);
 
                 }
             })
@@ -221,16 +243,12 @@
         }
         function EditSelectedDEPFilter() {
             var NEWDEP = document.getElementById("NEWDepartment").value;
-            var NEWManager = document.getElementById("NEWManager").value;
+            var NEWManager = document.getElementById("EMPSELECTEdit").value;
             var visibilty = document.getElementById("Visibilty").value;
             var Code = document.getElementById("txtDEPCode").value;
 
-            if (NEWDEP == -1 || NEWManager == -1 || visibilty == -1) {
-                return swal({
-                    title: "Error",
-                    text: "Please Select From a List",
-                    type: "Error"
-                })
+            if (NEWDEP == "-1" || NEWManager == "-1" || visibilty == "-1") {
+                return swal("sorry, please Fill the Gaps");
             }
             else {
                 $.ajax({
@@ -337,7 +355,7 @@
                         <dev class="row">
                             <div class="col-sm-4">
                                 <label for="Department">Departments:</label>
-                                <select class="js-example-basic-multiple" id="NEWDepartment">
+                                <select onchange="GETEMPloyeeOfDEPForEdit()" class="js-example-basic-multiple" id="NEWDepartment">
                                     <option value="-1">--Select A Department--</option>
                                     @foreach (var department in (IEnumerable<OctopaAudioApp.Models.Department>)ViewData["DepartmentsList"])
                                     {
@@ -349,17 +367,18 @@
                         <dev class="row">
                             <div class="col-sm-4">
                                 <label for="Manager">Manager:</label>
-                                <select class="js-example-basic-multiple" id="NEWManager">
+                                <div id="EMPFromDEPEDIT" style="text-align:center"></div>
+                                <!--<select class="js-example-basic-multiple" id="NEWManager">
                                     <option value="-1">--Select A Manager--</option>
                                     @foreach (var Manager in (IEnumerable<OctopaAudioApp.Models.Employee>)ViewData["ManagerList"])
                                     {
-                                        <option value="@Manager.Code">@Manager.EnglishName</option>
-                                    }
+                                    <option value="@Manager.Code">@Manager.EnglishName</option>
+                                    }-->
                                     @*@foreach (var User in (IEnumerable<IdentityUser>)ViewData["UsersList"])
-                                     {
-                                         <option value="@User.UserName">@User.UserName</option>
-                                      }*@
-                                </select>
+            {
+                <option value="@User.UserName">@User.UserName</option>
+             }*@
+                                <!--</select>-->
                             </div>
                         </dev>
                         <dev class="row">

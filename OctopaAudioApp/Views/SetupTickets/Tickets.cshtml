@@ -285,84 +285,149 @@
 
         function ConfirmCancllation(id) {
             swal({
-                title: 'Are you sure?',
+
+                title: "Are you sure?",
+
                 text: "This ticket will be canceld!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, cancel it!'
-            }, function () {
-                $.ajax({
-                    type: "GET",
-                    url: "/SetupTickets/CancelTicket?TicketCode=" + id,
-                    contentType: "application/json;charset=utf-8",
-                    data: "{}",
-                    dataType: "json",
-                    success: function (result) {
-                        swal({
-                            title: "canceled!",
-                            text: "The Ticket Has Been Canceled",
-                            type: "success"
 
-                        },
-                            function () {
-                                window.location.reload();
+                type: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonClass: "btn-danger",
+
+                confirmButtonText: "Yes, Cancel it!",
+
+                closeOnConfirm: false,
+
+                allowOutsideClick: false
+
+            },
+
+                function () {
+                    $.ajax({
+                        type: "GET",
+                        url: "/SetupTickets/CancelTicket?TicketCode=" + id,
+                        contentType: "application/json;charset=utf-8",
+                        data: "{}",
+                        dataType: "json",
+                        success: function (result) {
+                            swal({
+                                title: "canceled!",
+                                text: "The Ticket Has Been Canceled",
+                                type: "success"
+
                             },
+                                function () {
+                                    window.location.reload();
+                                },
                            
-                        );
-                    },
-                    error: function (result) {
-                        swal({
-                            title: "Failed",
-                            text: "Somthing Went Wrong",
-                            type: "error"
-                        });
-                    }
-                })
-            }
-            );
-        }
-
-        function ConfirmCompletion(id) {
-            swal({
-                title: 'Are you sure?',
-                text: "This ticket will be completed!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, complete it!'
-            }, function () {
-                $.ajax({
-                    type: "GET",
-                    url: "/SetupTickets/FinishTicket?TicketCode=" + id,
-                    contentType: "application/json;charset=utf-8",
-                    data: "{}",
-                    dataType: "json",
-                    success: function (result) {
-                        swal({
-                            title: "Succes",
-                            text: "The Ticket Has Been Completed",
-                            type: "success"
-
+                            );
                         },
-                            function () {
-                                window.location.reload();
-                            }
-                        );
-                    },
-                    error: function (result) {
-                        swal({
-                            title: "Failed",
-                            text: "Somthing Went Wrong",
-                            type: "error"
-                        });
-                    }
-                })
-            }
+                        error: function (result) {
+                            swal({
+                                title: "Failed",
+                                text: "Somthing Went Wrong",
+                                type: "error"
+                            });
+                        }
+                    })
+                }
             );
         }
+        function ConfirmCompletion(id) {
+
+            swal({
+
+                title: "Are you sure?",
+
+                text: "This ticket will be completed!",
+
+                type: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonClass: "btn-success",
+
+                confirmButtonText: "Yes, Complete it!",
+
+                closeOnConfirm: false,
+
+                allowOutsideClick: false
+
+            },
+
+                function () {
+                    $.ajax({
+                        type: "GET",
+                        url: "/SetupTickets/FinishTicket?TicketCode=" + id,
+                        contentType: "application/json;charset=utf-8",
+                        data: "{}",
+                        dataType: "json",
+                        success: function (result) {
+                            swal({
+                                title: "Succes",
+                                text: "The Ticket Has Been Completed",
+                                type: "success"
+
+                            },
+                                function () {
+                                    window.location.reload();
+                                }
+                            );
+                        },
+                        error: function (result) {
+                            swal({
+                                title: "Failed",
+                                text: "Somthing Went Wrong",
+                                type: "error"
+                            });
+                        }
+                    })
+                }
+
+            );
+
+        }
+        //function ConfirmCompletion(id) {
+        //    swal({
+        //        title: 'Are you sure?',
+        //        text: "This ticket will be completed!",
+        //        type: 'warning',
+        //        showCancelButton: true,
+        //        confirmButtonColor: '#3085d6',
+        //        cancelButtonColor: '#d33',
+        //        confirmButtonText: 'Yes, complete it!'
+        //    }, function () {
+        //        $.ajax({
+        //            type: "GET",
+        //            url: "/SetupTickets/FinishTicket?TicketCode=" + id,
+        //            contentType: "application/json;charset=utf-8",
+        //            data: "{}",
+        //            dataType: "json",
+        //            success: function (result) {
+        //                swal({
+        //                    title: "Succes",
+        //                    text: "The Ticket Has Been Completed",
+        //                    type: "success"
+
+        //                },
+        //                    function () {
+        //                        window.location.reload();
+        //                    }
+        //                );
+        //            },
+        //            error: function (result) {
+        //                swal({
+        //                    title: "Failed",
+        //                    text: "Somthing Went Wrong",
+        //                    type: "error"
+        //                });
+        //            }
+        //        })
+        //    }
+        //    );
+        //}
     </script>
 </head>
 <body>
