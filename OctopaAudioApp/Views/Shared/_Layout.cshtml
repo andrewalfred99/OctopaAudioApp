@@ -67,6 +67,8 @@
 <body style="font-size:15px;font:bold;color:black">
 
     <!-- start: header -->
+    @if (SignInManager.IsSignedIn(User))
+    {
     <section class="body">
             <header class="header">
                 <div class="logo-container">
@@ -1274,6 +1276,13 @@
                 </div>
             </aside>
         </section>
+    }
+    else
+    {
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    }
 
     <!-- Vendor -->
     <script src="~/assets/vendor/jquery/jquery.js"></script>
