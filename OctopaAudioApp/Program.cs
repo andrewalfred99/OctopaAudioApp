@@ -16,7 +16,18 @@ namespace OctopaAudioApp
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            DbSeeder.SeedAsync(host.Services, host.Services.GetRequiredService<IConfiguration>()).GetAwaiter().GetResult();
+
+            try
+            {
+                DbSeeder.SeedAsync(host.Services, host.Services.GetRequiredService<IConfiguration>()).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Database/seed initialization failed:");
+                Console.Error.WriteLine(ex.ToString());
+                throw;
+            }
+
             host.Run();
         }
 
