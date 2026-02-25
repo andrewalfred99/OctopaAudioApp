@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OctopaAudioApp.Models;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace OctopaAudioApp.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -34,12 +36,14 @@ namespace OctopaAudioApp.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [AllowAnonymous]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

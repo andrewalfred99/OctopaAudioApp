@@ -43,6 +43,12 @@ using System.Threading.Tasks;
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AudioIdentity>();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/Login";
+            });
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<DataProtectionTokenProviderOptions>(o =>
         o.TokenLifespan = TimeSpan.FromHours(5));
