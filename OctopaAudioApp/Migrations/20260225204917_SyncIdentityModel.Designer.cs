@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OctopaAudioApp.Models;
 
@@ -11,9 +12,11 @@ using OctopaAudioApp.Models;
 namespace OctopaAudioApp.Migrations
 {
     [DbContext(typeof(AudioIdentity))]
-    partial class AudioIdentityModelSnapshot : ModelSnapshot
+    [Migration("20260225204917_SyncIdentityModel")]
+    partial class SyncIdentityModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

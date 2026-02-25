@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OctopaAudioApp.Models.Assigning;
 using OctopaAudioApp.Models.SetupModels;
+using System.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,8 @@ namespace OctopaAudioApp.Models.AudioDataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<ass>
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
