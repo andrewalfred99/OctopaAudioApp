@@ -67,9 +67,7 @@
 <body style="font-size:15px;font:bold;color:black">
 
     <!-- start: header -->
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <section class="body">
+    <section class="body">
             <header class="header">
                 <div class="logo-container">
                     <a href="../" class="logo">
@@ -257,8 +255,8 @@
 
                             </figure>
                             <div class="profile-info" data-lock-name="John Doe" data-lock-email="johndoe@JSOFT.com">
-                                <span class="name" style="font-size:15px">@User.Identity.Name</span>
-                                <span class="role">administrator</span>
+                                <span class="name" style="font-size:15px">@(User?.Identity?.IsAuthenticated == true ? User.Identity.Name : "Guest")</span>
+                                <span class="role">@(User?.Identity?.IsAuthenticated == true ? "administrator" : "")</span>
                             </div>
 
                             <i class="fa custom-caret"></i>
@@ -279,10 +277,9 @@
 
                                         var expire2 = (DateTime.Now - UserDate2.CreateDate);
 
-                                       
-                                             //Audio@123
-                                              if (UserDate2.PasswordHash == "AQAAAAEAACcQAAAAEMdVmTil03V0F7mJbjeD+2UQQK8q1xJDg1Gp9m5Dj2aG2vLkJK6QiigF24NYCHwhZg==" || expire2 > TimeSpan.FromDays(90))
-                                                {
+                                        //Audio@123
+                                        if (UserDate2.PasswordHash == "AQAAAAEAACcQAAAAEMdVmTil03V0F7mJbjeD+2UQQK8q1xJDg1Gp9m5Dj2aG2vLkJK6QiigF24NYCHwhZg==" || expire2 > TimeSpan.FromDays(90))
+                                        {
                                             <script type="text/javascript">
                                                 $(function(){
                                                     window.location.href = "@Url.Action("ChangePassword", "Account")";
@@ -290,9 +287,13 @@
                                                 });
                                             </script>
 
-                                              }
-    
+                                        }
+
                                         <a role="menuitem" tabindex="-1" asp-action="Logout" asp-controller="account"><i class="fa fa-power-off"></i> Logout</a>
+                                    }
+                                    else
+                                    {
+                                        <a role="menuitem" tabindex="-1" asp-action="Login" asp-controller="account"><i class="fa fa-sign-in"></i> Login</a>
                                     }
                                 </li>
                             </ul>
@@ -1273,14 +1274,6 @@
                 </div>
             </aside>
         </section>
-    }
-    else
-    {
-        <partial name="_CookieConsentPartial" />
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    }
 
     <!-- Vendor -->
     <script src="~/assets/vendor/jquery/jquery.js"></script>
