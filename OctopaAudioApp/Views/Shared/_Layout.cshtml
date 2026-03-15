@@ -464,28 +464,7 @@
                                         </a>
                                         <ul class="nav nav-children">
                                             <li>
-                                                <a asp-controller="SetupAssetd" asp-action="CreateNewBrand">Asset Brands</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupAssetd" asp-action="CreateNewType">Asset Types</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupAssetd" asp-action="CreateNewStatus">Asset Status</a>
-                                            </li>
-                                            <li>
                                                 <a asp-controller="Assign" asp-action="Index">Import Excel</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupAssetd" asp-action="Assets">Assets</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupAssetd" asp-action="ItemToUser">Assigns</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupAssetd" asp-action="AssignedDetails">Assigned Details</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupAssetd" asp-action="AssetHistory">Asset History</a>
                                             </li>
                                             <li>
                                                 <a asp-controller="Account" asp-action="ChangePassword">Change pass</a>
@@ -506,6 +485,42 @@
                                         </ul>
 
                                     </li>
+
+                                    <li class="nav-parent">
+                                        <a>
+                                            <i class="fa fa-desktop" aria-hidden="true"></i>
+                                            <span>IT Department</span>
+                                        </a>
+                                        <ul class="nav nav-children">
+                                            <li class="nav-parent">
+                                                <a>Asset Management</a>
+                                                <ul class="nav nav-children">
+                                                    <li>
+                                                        <a asp-controller="SetupAssetd" asp-action="CreateNewBrand">Asset Brands</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupAssetd" asp-action="CreateNewType">Asset Types</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupAssetd" asp-action="CreateNewStatus">Asset Status</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupAssetd" asp-action="Assets">Assets</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupAssetd" asp-action="ItemToUser">Assigns</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupAssetd" asp-action="AssignedDetails">Assigned Details</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupAssetd" asp-action="AssetHistory">Asset History</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+
                                     <li class="nav-parent">
                                         <a>
                                             <i class="fa fa-navicon (alias)" aria-hidden="true"></i>
