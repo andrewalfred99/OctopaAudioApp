@@ -466,24 +466,47 @@
                                             <li>
                                                 <a asp-controller="Assign" asp-action="Index">Import Excel</a>
                                             </li>
+
+                                        </ul>
+
+                                    </li>
+
+                                    <li class="nav-parent">
+                                        <a>
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            <span>Account</span>
+                                        </a>
+                                        <ul class="nav nav-children">
                                             <li>
                                                 <a asp-controller="Account" asp-action="ChangePassword">Change pass</a>
                                             </li>
                                             <li>
-                                                <a asp-controller="SetupTickets" asp-action="DEPFilter">Ticket Department Filter</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupTickets" asp-action="CommenIssues">Commen Issues</a>
-                                            </li>
-                                            <li>
                                                 <a asp-controller="SetupTickets" asp-action="Tickets">My Tickets</a>
                                             </li>
-                                            <li>
-                                                <a asp-controller="SetupTickets" asp-action="CreateNewTicketStatus">Ticket Status</a>
-                                            </li>
-
                                         </ul>
+                                    </li>
 
+                                    <li class="nav-parent">
+                                        <a>
+                                            <i class="fa fa-ticket" aria-hidden="true"></i>
+                                            <span>Ticket Support</span>
+                                        </a>
+                                        <ul class="nav nav-children">
+                                            <li class="nav-parent">
+                                                <a>Ticket Setup</a>
+                                                <ul class="nav nav-children">
+                                                    <li>
+                                                        <a asp-controller="SetupTickets" asp-action="DEPFilter">Ticket Department Filter</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupTickets" asp-action="CommenIssues">Commen Issues</a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="SetupTickets" asp-action="CreateNewTicketStatus">Ticket Status</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
                                     </li>
 
                                     <li class="nav-parent">
