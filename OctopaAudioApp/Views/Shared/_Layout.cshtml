@@ -463,10 +463,6 @@
                                             <span>Master Files</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="Assign" asp-action="Index">Import Excel</a>
-                                            </li>
-
                                         </ul>
 
                                     </li>
@@ -477,12 +473,6 @@
                                             <span>Account</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="Account" asp-action="ChangePassword">Change pass</a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="SetupTickets" asp-action="Tickets">My Tickets</a>
-                                            </li>
                                         </ul>
                                     </li>
 
@@ -546,110 +536,10 @@
 
                                     <li class="nav-parent">
                                         <a>
-                                            <i class="fa fa-navicon (alias)" aria-hidden="true"></i>
-                                            <span>Supply Chain</span>
-                                        </a>
-                                        <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-action="Index" asp-controller="OrderStatus">
-                                                    Order Status
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="AllocatedItems" asp-action="NewOrderAllocated">
-                                                    New order
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="AllocatedItems" asp-action="AmendOrder">
-                                                    Order Amned
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="OrderShipMents" asp-action="Index">
-                                                    Order Shipment
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="OrderStatus" asp-action="RepairAndReturnData">
-                                                    Repair And Return
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="OrderStatus" asp-action="LocalOrders">
-                                                    Local Orders
-                                                </a>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Reportes</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="OrderStatus" asp-action="SUPReportList">Suppliers Orders Report</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="OrderStatus" asp-action="ShipmentItemsReport">Shipments Items Report</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="OrderStatus" asp-action="CIFReport">CIF Report</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                    <li class="nav-parent">
-                                        <a>
                                             <i class="fa   fa-institution (alias)" aria-hidden="true"></i>
                                             <span>WareHouse</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="WHIssue" asp-action="WareHouseViewData">
-                                                    WareHouse
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a asp-area="" asp-controller="WHIssue" asp-action="Index">
-                                                    Create Receipt
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="WHIssue" asp-action="ViewAdd">
-                                                    Add
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="WHIssue" asp-action="FindSerial">
-                                                    Find Serial
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="WHIssue" asp-action="AllReceipts">
-                                                    Find Receipts
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a asp-controller="LP" asp-action="ConfirmItem">
-                                                    New Item
-                                                </a>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Reports</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="WHIssue" asp-action="ItemCard">
-                                                            Item Card
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="WHIssue" asp-action="PriceList">
-                                                            Price List
-                                                        </a>
-                                                    </li>
-                                                </ul>
-
-                                            </li>
                                         </ul>
                                     </li>
 
@@ -659,36 +549,6 @@
                                             <span>Showroom</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="Showroom" asp-action="Create">
-                                                    Create Receipt
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="Showroom" asp-action="AllReceipts">
-                                                    Revenue
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="Showroom" asp-action="ViewHolding">
-                                                    Payment Method
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="Showroom" asp-action="Collection">
-                                                    Collection
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="Showroom" asp-action="ShiftClose">
-                                                    Shift Close
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="Showroom" asp-action="RetailCustomers">
-                                                    Retail Customers
-                                                </a>
-                                            </li>
                                         </ul>
                                     </li>
 
@@ -699,93 +559,6 @@
                                             <span>Account Receivable</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="ReceiptAccountViews" asp-action="ReceivableCycle">
-                                                    Receivables
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="ReceiptAccountViews" asp-action="CancelReceivable">
-                                                    Cancel Receivables
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="ReceiptAccountViews" asp-action="WriteOffIndex">
-                                                    Write Off
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="ReceiptAccountViews" asp-action="NewRequestList">
-                                                    New Deduction Request
-                                                </a>
-                                            </li>
-                                            @*<li>
-                                                    <a asp-controller="ReceiptAccountViews" asp-action="Index">
-                                                        Order Collections
-                                                    </a>
-                                                </li>*@
-                                            <li>
-                                                <a asp-controller="InvoiceTrakcing" asp-action="Index">
-                                                    Invoice Tracking
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="ReceiptAccountViews" asp-action="StatmentComment">
-                                                    Customer Comments
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="CreditNote" asp-action="SalesCreditNote" class="nav-link">
-                                                    Sales Credit Note
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="POView" asp-action="SearchRequests" class="nav-link">
-                                                    Po Payment Method
-                                                </a>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Progress Billing</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="Demodulators" asp-action="Index" class="nav-link">Create Progress Billing</a>
-                                                    </li>
-                                                </ul>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="Demodulators" asp-action="ProgressBillings" class="nav-link">All Progress Billings</a>
-                                                    </li>
-                                                </ul>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="ProgressBillings" asp-action="ProgressBillings" class="nav-link">Progress Billings</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-
-                                            <li class="nav-parent">
-                                                <a>Reports</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="ReceiptAccountViews" asp-action="DownPaymentView" class="nav-link">DownPayment</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Reportes</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="ReceiptAccountViews" asp-action="FindReceiptReport" class="nav-link">Find Receipt</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="ReceiptAccountViews" asp-action="CustomerstatemnetReport" class="nav-link">Customer Statement</a>
-                                                    </li>
-                                                    @*<li>
-                                                            <a asp-controller="ReceiptAccountViews" asp-action="PrintReceipt" class="nav-link">Print Receipt</a>
-                                                        </li>*@
-                                                </ul>
-
-                                            </li>
                                         </ul>
                                     </li>
                                     <li class="nav-parent">
@@ -794,52 +567,6 @@
                                             <span>Sales</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="Offer" asp-action="Index" class="nav-link">
-                                                    Offer
-                                                </a>
-                                                <a asp-controller="Sales" asp-action="CustomerCategory" class="nav-link">
-                                                    Customer Category
-                                                </a>
-                                                <a asp-controller="Sales" asp-action="AddDiscount" class="nav-link">
-                                                    Add Brand Discount
-                                                </a>
-
-                                            <li>
-                                                <a asp-controller="POView" asp-action="POFullView" class="nav-link">
-                                                    PO View
-                                                </a>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Request</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="Requests" asp-action="Creation" class="nav-link">
-                                                            Create Request
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="Requests" asp-action="AllRequests" class="nav-link">
-                                                            Request View
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="Requests" asp-action="HeadAprove" class="nav-link">
-                                                            Head Check
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="Requests" asp-action="RequestCheck" class="nav-link">
-                                                            Admin Check
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="Requests" asp-action="AccountCheck" class="nav-link">
-                                                            Account Check
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li>
                                         </ul>
 
                                     </li>
@@ -849,28 +576,6 @@
                                             <span>Egyptian Tax Authority</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-
-                                                <a asp-controller="EgyptianTaxesAuthority" asp-action="ItemsCoding" class="nav-link">
-                                                    Items Coding
-                                                </a><a asp-controller="EgyptianTaxesAuthority" asp-action="ItemsCodingAllItems" class="nav-link">
-                                                    Items Coding (All Items)
-                                                </a>
-                                                <a asp-controller="EgyptianTaxesAuthority" asp-action="TaxInvoicingRetail" class="nav-link">
-                                                    Retail Invoicing
-                                                </a>
-                                                <a asp-controller="EgyptianTaxesAuthority" asp-action="TaxInvoicingSales" class="nav-link">
-                                                    Sales Invoicing
-                                                </a>
-                                                <a asp-controller="EgyptianTaxesAuthority" asp-action="TaxSalesCreditNote" class="nav-link">
-                                                    Sales Credit Note Invoicing
-                                                </a>
-                                                <a asp-controller="EgyptianTaxesAuthority" asp-action="TaxInvoices" class="nav-link">
-                                                    Tax Invoices Details
-                                                </a>
-
-
-                                            </li>
                                         </ul>
 
                                     </li>
@@ -880,23 +585,6 @@
                                             <span>Installion</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="LP" asp-action="TechincalRequest" class="nav-link">
-                                                    Installion Request
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="LP" asp-action="SupervisorCheck" class="nav-link">
-                                                    Supervisor  Approval
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="LP" asp-action="AdminCheck" class="nav-link">
-                                                    Admin Approval
-                                                </a>
-                                            </li>
-
-
                                         </ul>
                                     </li>
                                     <li class="nav-parent">
@@ -905,31 +593,6 @@
                                             <span>Planning</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li class="nav-item">
-                                                <a asp-controller="allocateditems" asp-action="Index">
-                                                    Acquiring Report
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a asp-controller="allocateditems" asp-action="SparePartOrdersList">
-                                                    Spare Part Orders
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="POView" asp-action="Index">
-                                                    PO View
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="POView" asp-action="MergeModel">
-                                                    Replace Model
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="POView" asp-action="ViewPricing">
-                                                    Pricing
-                                                </a>
-                                            </li>
                                         </ul>
                                     </li>
                                     <li class="nav-parent">
@@ -938,48 +601,6 @@
                                             <span>Service Center</span>
                                         </a>
                                         <ul class="nav nav-children">
-
-                                            <li class="nav-item">
-                                                <a asp-controller="ServiceCenterData" asp-action="RepairAndReturnView">
-                                                    Repair and Return
-                                                </a>
-                                                <a asp-controller="ServiceCenterData" asp-action="SparePartOrderView">
-                                                    Spare Part Order
-                                                </a>
-                                                <a asp-controller="ServiceCenterData" asp-action="ServiceCenterCollection">
-                                                    Collection Report
-                                                </a>
-                                                <a asp-controller="ServiceCenterData" asp-action="OPReport">
-                                                    Maintenance Finance
-                                                </a>
-                                                <a asp-controller="ServiceCenterData" asp-action="InvoiceRequest">
-                                                    Invoice Requestes
-                                                </a>
-
-                                                <a asp-controller="ServiceCenterData" asp-action="SCRecReceivable">
-                                                    Service Center Receivable
-                                                </a>
-
-
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Maintenance Report</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="ServiceCenterData" asp-action="GetAllreports">New Report</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="ServiceCenterData" asp-action="TechnicalReport">Technical Report</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="ServiceCenterData" asp-action="ReportPricing">Report Pricing</a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="ServiceCenterData" asp-action="ReportReceiveing">Report Receiveing</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-
                                         </ul>
                                     </li>
                                     <li class="nav-parent">
@@ -988,92 +609,6 @@
                                             <span>Human Resources </span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li>
-                                                <a asp-controller="EmployeeData" asp-action="Index">
-                                                    Empolyee Data
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="EmployeeData" asp-action="Create">
-                                                    New Empolyee
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="EmployeeData" asp-action="CreateNewKPIOrg">
-                                                    New KPI
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a asp-controller="EmployeeData" asp-action="EvaluationDataReport">
-                                                    Evaluation Report
-                                                </a>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Loans Data</a>
-                                                <ul class="nav nav-children">
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Loans" asp-route-type="HRA" asp-action="Create">
-                                                            New Loan
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Loans" asp-action="Index">
-                                                            Loan Details
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Loans" asp-route-type="PRA" asp-action="ApprovalSycle">
-                                                            President approval
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Loans" asp-route-type="HRA" asp-action="ApprovalSycle">
-                                                            HR Preview
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Loans" asp-route-type="FMA" asp-action="ApprovalSycle">
-                                                            HR Approval
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Loans" asp-route-type="HRA" asp-action="EditLoan">
-
-                                                            Updates Loan
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Loans" asp-action="LoanReport">
-                                                            Loan Report
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <ul class="nav nav-children">
-                                                    <li class="nav-parent">
-                                                        <a>Reports</a>
-                                                        <ul class="nav nav-children">
-                                                            <li class="nav-item">
-                                                                <a asp-controller="EmployeeData" asp-action="EmployeesReport">
-                                                                    Employees Report
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a asp-controller="EmployeeData" asp-action="AttReport">
-                                                                    Attendance
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a asp-controller="EmployeeData" asp-action="VacationsDetails">
-                                                                    Vacations Details
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </li>
                                         </ul>
                                     </li>
                                     <li class="nav-parent">
@@ -1082,77 +617,6 @@
                                             <span>Genral Accounts</span>
                                         </a>
                                         <ul class="nav nav-children">
-                                            <li class="nav-parent">
-                                                <a>Vouchers</a>
-                                                <ul class="nav nav-children">
-                                                    <li>
-                                                        <a asp-controller="GeneralAccounting" asp-action="CollectedVoucherView">
-                                                            Receipt Voucher
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="GeneralAccounting" asp-action="PaymentVoucherView">
-                                                            Payment Voucher
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a asp-controller="GeneralAccounting" asp-action="PendingVouchers">
-                                                            Pending Vouchers
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-parent">
-                                                <a>Reports</a>
-                                                <ul class="nav nav-children">
-                                                    <li class="nav-item">
-                                                        <a asp-controller="InvoiceCost" asp-action="Index">
-                                                            Add Invoice Cost
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="InvoiceCost" asp-action="CanceldInvoiceCost">
-                                                            Add Cancelled  Invoice Cost
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="InvoiceCost" asp-action="InvoiceCostCiewEntry">
-                                                            Invoice Cost Report
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="InvoiceCost" asp-action="InvoiceCostCancelCiewEntry">
-                                                            Cancelled Invoice Cost Report
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="InvoiceCost" asp-action="ReceiptCostView">
-                                                            Receipt Cost Report
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="InvoiceCost" asp-action="ShowRoomPLIndex">
-                                                            ShowRoom P&L
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Generator" asp-action="ViewAccount">
-                                                            FS Generator
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="InvoiceCost" asp-action="LocalOrdersAdjusting">
-                                                            Local Purchasing ADJ
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a asp-controller="Generator" asp-action="ViewAccount">
-                                                            FS Generator
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                </ul>
-                                            </li>
                                         </ul>
 
                                     <li class="nav-parent">
@@ -1161,6 +625,9 @@
                                             <span>Adminstration</span>
                                         </a>
                                         <ul class="nav nav-children">
+                                            <li>
+                                                <a asp-controller="Assign" asp-action="Index">Import Excel</a>
+                                            </li>
                                             <li class="nav-item">
                                                 <a asp-controller="Account" asp-action="Index">
                                                     Create User
@@ -1180,6 +647,9 @@
                                                 <a asp-controller="Account" asp-action="ChangePassword">
                                                     Change Password
                                                 </a>
+                                            </li>
+                                            <li>
+                                                <a asp-controller="SetupTickets" asp-action="Tickets">My Tickets</a>
                                             </li>
                                         </ul>
                                     </li>
